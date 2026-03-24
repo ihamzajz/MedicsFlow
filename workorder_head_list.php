@@ -329,6 +329,7 @@ function pageUrl($p)
       background: #eef2f7;
     }
   </style>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -620,3 +621,4 @@ function pageUrl($p)
 
 </html>
 <?php ob_end_flush(); ?>
+

@@ -167,6 +167,7 @@ body{
     .kv-row{ grid-template-columns:1fr; }
 }
 </style>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -312,3 +313,4 @@ $('#sidebarCollapse').on('click', function(){
 <?php include "footer.php"; ?>
 </body>
 </html>
+

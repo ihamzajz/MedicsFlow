@@ -152,7 +152,8 @@
     }
     } 
 </style>
-    </head>
+    <?php include 'workorder_nav_theme.php'; ?>
+</head>
     <body>
         <?php
             include 'dbconfig.php';

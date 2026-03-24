@@ -154,6 +154,7 @@ if (!isset($_SESSION['loggedin'])) {
     } 
 </style>
 
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 

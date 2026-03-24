@@ -271,6 +271,7 @@ $rowDepartT  = (string)($row['depart_type'] ?? '');
             font-weight: 900;
         }
     </style>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -370,3 +371,4 @@ $rowDepartT  = (string)($row['depart_type'] ?? '');
 </body>
 
 </html>
+

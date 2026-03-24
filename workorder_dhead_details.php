@@ -177,6 +177,7 @@ if (!$row) {
             }
         }
     </style>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -372,3 +373,4 @@ if (!$row) {
 </body>
 
 </html>
+

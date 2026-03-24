@@ -222,6 +222,7 @@ function pageUrl($p)
   </style>
 
   <?php include 'sidebarcss.php'; ?>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>

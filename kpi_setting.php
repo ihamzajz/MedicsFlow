@@ -392,14 +392,14 @@ $mail = new PHPMailer(true);
                                 ?>
                                 <script type="text/javascript">
                                     alert("Form has been submitted!");
-                                    window.location.href = "workorderForm.php";
+                                    window.location.href = "workorder_form.php";
                                 </script>
                                 <?php
                             } else {
                                 ?>
                                 <script type="text/javascript">
                                     alert("Form submission failed!");
-                                    window.location.href = "workorderForm.php";
+                                    window.location.href = "workorder_form.php";
                                 </script>
                                 <?php
                             }

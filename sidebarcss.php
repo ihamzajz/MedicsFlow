@@ -1,4 +1,30 @@
  <style>
+     body,
+     #sidebar,
+     #content,
+     input,
+     select,
+     textarea,
+     button,
+     label,
+     table,
+     th,
+     td,
+     a,
+     p,
+     span,
+     div,
+     h1,
+     h2,
+     h3,
+     h4,
+     h5,
+     h6 {
+         font-family: 'Poppins', sans-serif !important;
+         font-optical-sizing: auto;
+         font-style: normal;
+     }
+
      .wrapper {
          display: flex;
          width: 100%;

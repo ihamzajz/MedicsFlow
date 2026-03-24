@@ -113,6 +113,7 @@ $mail = new PHPMailer(true);
     </style>
 
     <?php include 'sidebarcss.php'; ?>
+<?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -301,7 +302,7 @@ $mail = new PHPMailer(true);
                                     <script>
                                         document.getElementById("loadingMsg").remove();
                                         alert("✅ Form submitted successfully");
-                                        window.location.href = "workorderForm.php";
+                                        window.location.href = "workorder_form.php";
                                     </script>';
                                     exit;
                                 } catch (Exception $e) {
@@ -312,7 +313,7 @@ $mail = new PHPMailer(true);
                                     <script>
                                         document.getElementById("loadingMsg").remove();
                                         alert("⚠️ Form submitted successfully, but email failed to send. Please contact IT.");
-                                        window.location.href = "workorderForm.php";
+                                        window.location.href = "workorder_form.php";
                                     </script>';
                                     exit;
                                 }
@@ -320,7 +321,7 @@ $mail = new PHPMailer(true);
                                 echo '
                                 <script>
                                     alert("❌ Form submission failed!");
-                                    window.location.href = "workorderForm.php";
+                                    window.location.href = "workorder_form.php";
                                 </script>';
                                 exit;
                             }
@@ -486,3 +487,4 @@ $mail = new PHPMailer(true);
 </body>
 
 </html>
+
