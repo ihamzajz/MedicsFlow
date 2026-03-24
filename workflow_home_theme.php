@@ -1,4 +1,26 @@
 <style>
+@keyframes workflowFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes workflowSlideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 body {
   background-color: #f2f3f5 !important;
 }
@@ -58,6 +80,9 @@ body {
   border-top: 0 !important;
   text-transform: none !important;
   letter-spacing: normal !important;
+  opacity: 0;
+  animation: workflowSlideLeft 0.62s ease forwards;
+  animation-delay: 0.12s;
 }
 
 .section-title.first {
@@ -83,6 +108,9 @@ body {
   border-radius: 14px !important;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12) !important;
   transition: all 0.22s ease !important;
+  opacity: 0;
+  animation: workflowFadeUp 0.68s ease forwards;
+  animation-delay: 0.3s;
 }
 
 .menu-item:hover {
