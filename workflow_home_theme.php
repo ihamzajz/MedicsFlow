@@ -31,8 +31,9 @@ body {
   margin: 0 0 22px !important;
   color: #ffffff !important;
   font-size: 20px !important;
-  font-weight: 900 !important;
+  font-weight: 800 !important;
   line-height: 1.25 !important;
+  letter-spacing: 0.4px !important;
 }
 
 .inner-card {
@@ -47,12 +48,12 @@ body {
 
 .section-title {
   grid-column: 1 / -1 !important;
-  margin: 7px 0 0 !important;
+  margin: 7px 0 -7px !important;
   padding: 0 2px !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
   font-family: 'Poppins', sans-serif !important;
-  color: #0f172a !important;
+  color: #22223b !important;
   background: transparent !important;
   border-top: 0 !important;
   text-transform: none !important;
@@ -100,7 +101,7 @@ body {
   flex: 0 0 42px !important;
   font-size: 16px !important;
   color: #ffffff !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 8px !important;
 }
 
 .icon-green {
@@ -118,9 +119,9 @@ body {
 .menu-label,
 .menu-item span:nth-of-type(2) {
   display: block !important;
-  font-size: 12px !important;
+  font-size: 11.5px !important;
   font-weight: 700 !important;
-  color: #0f172a !important;
+  color: #4a4e69 !important;
   line-height: 1.1 !important;
 }
 
