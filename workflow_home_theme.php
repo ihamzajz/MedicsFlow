@@ -23,6 +23,9 @@
 
 body {
   background-color: #f2f3f5 !important;
+  font-family: 'Poppins', sans-serif !important;
+  font-optical-sizing: auto;
+  font-style: normal;
 }
 
 .container .row,
@@ -45,6 +48,7 @@ body {
 }
 
 .home-heading {
+  font-family: 'Poppins', sans-serif !important;
   border-radius: 18px !important;
   padding: 22px 24px !important;
   background: linear-gradient(135deg, #0f172a, #1e3a8a, #3b82f6) !important;
@@ -93,6 +97,7 @@ body {
 .menu-item {
   position: relative !important;
   overflow: hidden !important;
+  font-family: 'Poppins', sans-serif !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -107,15 +112,15 @@ body {
   border: 1px solid #e5e7eb !important;
   border-radius: 14px !important;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12) !important;
-  transition: all 0.22s ease !important;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease !important;
   opacity: 0;
   animation: workflowFadeUp 0.68s ease forwards;
   animation-delay: 0.3s;
 }
 
 .menu-item:hover {
-  transform: translateY(-6px) !important;
-  box-shadow: 0 26px 55px rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-5px) !important;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.16) !important;
   color: inherit !important;
 }
 
@@ -132,16 +137,44 @@ body {
   margin-bottom: 8px !important;
 }
 
-.icon-green {
+.icon-form {
   background: #22c55e !important;
 }
 
-.icon-blue {
+.icon-history {
+  background: #6366f1 !important;
+}
+
+.icon-approval {
+  background: #f59e0b !important;
+}
+
+.icon-dashboard {
+  background: #1f2937 !important;
+}
+
+.icon-edit {
+  background: #ec4899 !important;
+}
+
+.icon-report {
+  background: #14b8a6 !important;
+}
+
+.icon-data {
+  background: #8b5cf6 !important;
+}
+
+.icon-listing {
   background: #3b82f6 !important;
 }
 
-.icon-amber {
-  background: #f59e0b !important;
+.icon-cost {
+  background: #8b5cf6 !important;
+}
+
+.icon-closeout {
+  background: #f97316 !important;
 }
 
 .menu-label,
@@ -149,6 +182,7 @@ body {
   display: block !important;
   font-size: 11.5px !important;
   font-weight: 700 !important;
+  font-family: 'Poppins', sans-serif !important;
   color: #4a4e69 !important;
   line-height: 1.1 !important;
 }

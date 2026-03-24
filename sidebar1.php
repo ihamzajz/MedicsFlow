@@ -40,8 +40,12 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
     </div>
 
     <ul class="list-unstyled components">
+        <li class="text-center mb-2" style="background: #5c6f87; background: -webkit-linear-gradient(to right, #eef2f3, #5c6f87); background: linear-gradient(to right, #eef2f3, #5c6f87);">
+            <a href="tutorials.php" style="font-size:12.5px!important;font-weight:600;color:#1f2937!important;padding:8px!important;display:block;">Tutorials</a>
+        </li>
+
         <li class="main-xt text-center mb-2">
-            <a href=" http://localhost:9090/MExtractor/login.php" target="_blank" style="letter-spacing:0.5px;font-size:15px!important;font-weight:600">MExtractor</a>
+            <a href=" http://localhost:9090/MExtractor/login.php" target="_blank" style="font-size:12.5px!important;font-weight:600;color:#ffffff!important;padding:8px!important;display:block;">MExtractor</a>
         </li>
 
         <li style="background-color:#292E34!important;" class="text-center main-1">
@@ -55,27 +59,25 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
                 <i class="fas fa-plus toggle-icon" data-target="#pageSubmenu8"></i>
             </a>
             <ul class="collapse list-unstyled" id="pageSubmenu8">
-
                 <?php if ($sales_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="online_booking_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">â—‹ Online Booking</a></li>
+                            style="letter-spacing:0.5px;text-align:left">○ Online Booking</a></li>
                 <?php } ?>
 
                 <?php if ($sc_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="supply_chain_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">â—‹ Supply Chain</a></li>
+                            style="letter-spacing:0.5px;text-align:left">○ Supply Chain</a></li>
                 <?php } ?>
 
                 <?php if ($it_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="technology_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">â—‹ Technology</a></li>
+                            style="letter-spacing:0.5px;text-align:left">○ Technology</a></li>
                 <?php } ?>
 
                 <?php if ($finance_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="finance_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">â—‹ Finance</a></li>
+                            style="letter-spacing:0.5px;text-align:left">○ Finance</a></li>
                 <?php } ?>
-
             </ul>
         </li>
 
@@ -116,14 +118,14 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
                 <li class="mb-1">
                     <a href="cash_purchase_home.php" class="sub-menu-a-bg"
                         style="letter-spacing:0.5px;text-align:left">
-                        â—‹ Cash Purchase
+                        ○ Cash Purchase
                     </a>
                 </li>
 
                 <li class="mb-1">
                     <a href="expense_claim_home.php" class="sub-menu-a-bg"
                         style="letter-spacing:0.5px;text-align:left">
-                        â—‹ Expense Claim
+                        ○ Expense Claim
                     </a>
                 </li>
             </ul>
