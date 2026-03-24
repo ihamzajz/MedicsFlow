@@ -40,16 +40,16 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
     </div>
 
     <ul class="list-unstyled components">
-        <li class="text-center mb-2" style="background: #5c6f87; background: -webkit-linear-gradient(to right, #eef2f3, #5c6f87); background: linear-gradient(to right, #eef2f3, #5c6f87);">
+        <li class="text-center mb-1" style="background: #5c6f87; background: -webkit-linear-gradient(to right, #eef2f3, #5c6f87); background: linear-gradient(to right, #eef2f3, #5c6f87);">
             <a href="tutorials.php" style="font-size:12.5px!important;font-weight:600;color:#1f2937!important;padding:8px!important;display:block;">Tutorials</a>
         </li>
 
-        <li class="main-xt text-center mb-2">
+        <li class="main-xt text-center mb-1">
             <a href=" http://localhost:9090/MExtractor/login.php" target="_blank" style="font-size:12.5px!important;font-weight:600;color:#ffffff!important;padding:8px!important;display:block;">MExtractor</a>
         </li>
 
         <li style="background-color:#292E34!important;" class="text-center main-1">
-            <a href="#" style="font-size:12.5px!important">PowerBI Dashboards</a>
+            <a href="#" style="font-size:12.5px!important;font-weight:600;padding:8px!important;display:block;">PowerBI Dashboards</a>
         </li>
 
         <li class="mb-1">
@@ -82,7 +82,7 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
         </li>
 
         <li class="text-center main-2">
-            <a href="#" style="letter-spacing:0.5px;font-size:12.5px!important">WorkFlow</a>
+            <a href="#" style="font-size:12.5px!important;font-weight:600;padding:8px!important;display:block;">WorkFlow</a>
         </li>
 
         <li class="">
@@ -203,13 +203,13 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
         </li>
     </ul>
     <ul class="list-unstyled CTAs">
-        <li class="main-3">
-            <a href="logout.php" style="letter-spacing:0.5px;font-size:12.5px!important">Logout</a>
+        <li class="main-3 mb-1">
+            <a href="logout.php" style="font-size:12.5px!important;font-weight:600;padding:8px!important;display:block;">Logout</a>
         </li>
-        <li><a href="profile.php" class="main-4" style="letter-spacing:0.5px;font-size:13px!important">Profile</a></li>
+        <li class="mb-1"><a href="profile.php" class="main-4" style="font-size:12.5px!important;font-weight:600;padding:8px!important;display:block;">Profile</a></li>
 
         <?php if ($be_depart == 'it') { ?>
-            <li><a href="admin_panel.php" class="mt-3" style="letter-spacing:0.5px;font-size:13px!important;background-color:#FFFCFB!important;color:black!important">Admin Panel</a></li>
+            <li><a href="admin_panel.php" class="mt-1" style="font-size:12.5px!important;font-weight:600;padding:8px!important;display:block;background-color:#FFFCFB!important;color:black!important">Admin Panel</a></li>
         <?php } ?>
     </ul>
 

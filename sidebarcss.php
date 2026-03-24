@@ -17,11 +17,11 @@
          margin-left: 0;
      }
      #sidebar .sidebar-header {
-         padding: 20px;
+         padding: 20px 20px 12px 20px;
          background: #292E34 !important;
      }
      #sidebar ul.components {
-         padding: 10px 0;
+         padding: 5px 0 10px 0;
      }
      #sidebar ul p {
          color: #fff;

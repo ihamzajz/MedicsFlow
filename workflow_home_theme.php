@@ -1,26 +1,4 @@
 <style>
-@keyframes workflowFadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes workflowSlideLeft {
-  from {
-    opacity: 0;
-    transform: translateX(22px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 body {
   background-color: #f2f3f5 !important;
   font-family: 'Poppins', sans-serif !important;
@@ -85,13 +63,18 @@ body {
   text-transform: none !important;
   letter-spacing: normal !important;
   opacity: 0;
-  animation: workflowSlideLeft 0.62s ease forwards;
-  animation-delay: 0.12s;
+  transform: translate3d(22px, 0, 0);
+  transition: opacity 0.62s ease, transform 0.62s ease;
 }
 
 .section-title.first {
   border-top: 0 !important;
   margin-top: 0 !important;
+}
+
+.section-title.workflow-heading-ready {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
 
 .menu-item {
@@ -112,14 +95,20 @@ body {
   border: 1px solid #e5e7eb !important;
   border-radius: 14px !important;
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.12) !important;
+  transform: translate3d(0, 18px, 0) !important;
+  will-change: transform, box-shadow !important;
+  backface-visibility: hidden;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease !important;
   opacity: 0;
-  animation: workflowFadeUp 0.68s ease forwards;
-  animation-delay: 0.3s;
+}
+
+.menu-item.workflow-card-ready {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) !important;
 }
 
 .menu-item:hover {
-  transform: translateY(-5px) !important;
+  transform: translate3d(0, -5px, 0) !important;
   box-shadow: 0 20px 42px rgba(0, 0, 0, 0.16) !important;
   color: inherit !important;
 }
@@ -202,3 +191,18 @@ body {
   }
 }
 </style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  window.setTimeout(function () {
+    document.querySelectorAll('.section-title').forEach(function (el) {
+      el.classList.add('workflow-heading-ready');
+    });
+  }, 120);
+
+  window.setTimeout(function () {
+    document.querySelectorAll('.menu-item').forEach(function (el) {
+      el.classList.add('workflow-card-ready');
+    });
+  }, 300);
+});
+</script>
