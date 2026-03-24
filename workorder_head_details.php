@@ -1,0 +1,372 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedin'])) {
+    header('Location: login.php');
+    exit;
+}
+
+include 'dbconfig.php';
+
+/* =========================
+   Helpers
+========================= */
+function fmt_date_ddmmyyyy($val): string
+{
+    $val = trim((string)$val);
+    if ($val === '' || $val === '0000-00-00' || $val === '0000-00-00 00:00:00') return '';
+    try {
+        $dt = new DateTime($val);
+        return $dt->format('d-m-Y');
+    } catch (Exception $e) {
+        return htmlspecialchars($val);
+    }
+}
+
+/* =========================
+   Fetch record
+========================= */
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$select = "SELECT * FROM workorder_form WHERE id = {$id} LIMIT 1";
+$select_q = mysqli_query($conn, $select);
+$row = mysqli_fetch_assoc($select_q);
+
+if (!$row) {
+    die("No record found!");
+}
+
+/* =========================
+   Head page endpoints
+========================= */
+$approveFile = 'workorder_head_approve.php';
+$rejectFile  = 'workorder_head_reject.php';
+
+/* Keep same params style like your list pages */
+$rowEmail    = (string)($row['email'] ?? '');
+$rowName     = (string)($row['name'] ?? '');
+$rowType     = (string)($row['type'] ?? '');
+$rowCategory = (string)($row['category'] ?? '');
+$rowDepartT  = (string)($row['depart_type'] ?? '');
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Workorder – Head Details</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php include 'cdncss.php'; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <?php include 'sidebarcss.php'; ?>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            color: #000;
+        }
+
+        .btn {
+            border-radius: 2px;
+        }
+
+        /* ===== Top Bar ===== */
+        .bg-menu {
+            background-color: #393E46 !important;
+        }
+
+        .btn-menu {
+            font-size: 12.5px;
+            background-color: #FFB22C !important;
+            padding: 5px 10px;
+            font-weight: 600;
+            border: none !important;
+        }
+
+        /* ===== Card ===== */
+        .nh-card {
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .nh-head {
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nh-head h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .nh-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nh-actions a {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* ===== Sections ===== */
+        .section-title {
+            margin: 18px 0 8px;
+            font-size: 12.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        /* ===== Field blocks ===== */
+        .label {
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .value-box {
+            border: 1px solid #000;
+            padding: 7px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 400;
+            min-height: 34px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        /* ===== Grid KV layout ===== */
+        .kv-box {
+            border: 1px solid #000;
+            border-radius: 14px;
+            padding: 8px 10px;
+        }
+
+        .kv-row {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 10px;
+            padding: 6px 0;
+            border-top: 1px dashed rgba(0, 0, 0, .25);
+        }
+
+        .kv-row:first-child {
+            border-top: none;
+        }
+
+        .k {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .v {
+            font-size: 12px;
+            font-weight: 400;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        @media(max-width:600px) {
+            .kv-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ✅ Professional Action Buttons (same as engineering) */
+        .action-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 12px 14px;
+            margin: 14px 18px 0;
+            border: 1px solid rgba(0, 0, 0, .12);
+            background: #fafafa;
+            border-radius: 14px;
+        }
+
+        .button-approveN,
+        .button-rejectN {
+            appearance: none;
+            -webkit-appearance: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 38px;
+            min-width: 140px;
+            padding: 0 16px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            letter-spacing: .2px;
+            text-decoration: none;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: transform .12s ease, box-shadow .12s ease, filter .12s ease, background .12s ease, border-color .12s ease;
+            user-select: none;
+            line-height: 1;
+        }
+
+        .button-approveN:focus,
+        .button-rejectN:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, .18);
+        }
+
+        .button-approveN:active,
+        .button-rejectN:active {
+            transform: translateY(1px);
+        }
+
+        .button-approveN {
+            background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+            border-color: #15803d;
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(22, 163, 74, .18);
+        }
+
+        .button-approveN:hover {
+            filter: brightness(.98);
+            box-shadow: 0 10px 22px rgba(22, 163, 74, .24);
+        }
+
+        .button-rejectN {
+            background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+            border-color: #b91c1c;
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(220, 38, 38, .18);
+        }
+
+        .button-rejectN:hover {
+            filter: brightness(.98);
+            box-shadow: 0 10px 22px rgba(220, 38, 38, .24);
+        }
+
+        .button-approveN::before {
+            content: "✓";
+            font-weight: 900;
+        }
+
+        .button-rejectN::before {
+            content: "✕";
+            font-weight: 900;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper d-flex align-items-stretch">
+        <?php include 'sidebar1.php'; ?>
+
+        <div id="content">
+            <nav class="navbar navbar-light bg-menu">
+                <div class="container-fluid">
+                    <button id="sidebarCollapse" class="btn btn-menu">
+                        <i class="fas fa-align-left"></i>
+                        <span>Menu</span>
+                    </button>
+                </div>
+            </nav>
+
+            <div class="container-fluid p-3">
+                <div class="nh-card">
+
+                    <!-- Header -->
+                    <div class="nh-head">
+                        <h1>Workorder – Head Details (Form # <?php echo (int)$row['id']; ?>)</h1>
+                        <div class="nh-actions">
+                            <a href="workorder_home.php"><i class="fa-solid fa-house"></i> Home</a>
+                            <a href="workorder_head_list.php"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                        </div>
+                    </div>
+
+           
+
+                    <div class="p-3">
+
+                        <!-- Submitter Info -->
+                        <div class="section-title">Submitter Info</div>
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <div class="label">Name</div>
+                                <div class="value-box"><?php echo htmlspecialchars($row['name'] ?? ''); ?></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="label">Department</div>
+                                <div class="value-box"><?php echo htmlspecialchars($row['department'] ?? ''); ?></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="label">Role</div>
+                                <div class="value-box"><?php echo htmlspecialchars($row['role'] ?? ''); ?></div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="label">Submission Date</div>
+                                <div class="value-box"><?php echo htmlspecialchars(fmt_date_ddmmyyyy($row['date'] ?? '')); ?></div>
+                            </div>
+                        </div>
+
+                        <!-- Request Details -->
+                        <div class="section-title">Request Details</div>
+                        <div class="kv-box">
+                            <div class="kv-row">
+                                <div class="k">Request For Department</div>
+                                <div class="v"><?php echo htmlspecialchars($row['depart_type'] ?? ''); ?></div>
+                            </div>
+                            <div class="kv-row">
+                                <div class="k">Type</div>
+                                <div class="v"><?php echo htmlspecialchars($row['type'] ?? ''); ?></div>
+                            </div>
+                            <div class="kv-row">
+                                <div class="k">Category</div>
+                                <div class="v"><?php echo htmlspecialchars($row['category'] ?? ''); ?></div>
+                            </div>
+                            <div class="kv-row">
+                                <div class="k">Amount</div>
+                                <div class="v"><?php echo htmlspecialchars($row['amount'] ?? ''); ?></div>
+                            </div>
+                            <div class="kv-row">
+                                <div class="k">Description</div>
+                                <div class="v"><?php echo htmlspecialchars($row['description'] ?? ''); ?></div>
+                            </div>
+                        </div>
+
+                    </div><!-- p-3 -->
+                </div><!-- nh-card -->
+            </div><!-- container -->
+        </div><!-- content -->
+    </div><!-- wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $('#sidebarCollapse').on('click', function() {
+            $('#sidebar1').toggleClass('active');
+        });
+
+
+    </script>
+
+    <script src="assets/js/main.js"></script>
+
+    <?php include "footer.php"; ?>
+</body>
+
+</html>

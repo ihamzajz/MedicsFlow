@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# Redirect /medicsflow exactly to /medicsflow/login
+RewriteCond %{REQUEST_URI} ^/medicsflow/?$ [NC]
+RewriteRule ^$ /medicsflow/login [L,R=301]
+
+
+# Optional: pretty URLs (clean .php)
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,}\s([^.]+)\.php [NC]
+RewriteRule ^ %1 [R=301,L]
+
+# Internally rewrite to .php if file exists
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ $1.php [L,QSA]
