@@ -1,8 +1,6 @@
 <?php
 include 'dbconfig.php';
 
-//echo $_SESSION['role'];
-
 $id = $_SESSION['id'] ?? '';
 $fname = $_SESSION['fullname'] ?? '';
 $username = $_SESSION['username'] ?? '';
@@ -16,7 +14,6 @@ $be_role = $_SESSION['be_role'] ?? '';
 $be_role2 = $_SESSION['be_role2'] ?? '';
 $be_depart_nh = $_SESSION['be_depart_nh'] ?? '';
 
-
 $sa_user = $_SESSION['sa_user'] ?? '';
 $sa_depart = $_SESSION['sa_depart'] ?? '';
 $sa_depart2 = $_SESSION['sa_depart2'] ?? '';
@@ -25,14 +22,12 @@ $sa_role = $_SESSION['sa_role'] ?? '';
 $email = $_SESSION['email'] ?? '';
 $asset_user = $_SESSION['asset_user'] ?? '';
 
-
 $it_dashboard = $_SESSION['it_dashboard'] ?? 'No';
 $sc_dashboard = $_SESSION['sc_dashboard'] ?? 'No';
 $sales_dashboard = $_SESSION['sales_dashboard'] ?? 'No';
 $finance_dashboard = $_SESSION['finance_dashboard'] ?? 'No';
 
 $expense_finance = $_SESSION['expense_finance'] ?? 'No';
-
 ?>
 
 <nav id="sidebar">
@@ -42,18 +37,12 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
             style="color:white!important;font-size:12.5px!important;color:yellow!important;font-weight:400;padding:0px!important;margin:0px!important">
             <?php echo $fname; ?>
         </p>
-        <!-- <p style="color:white!important;font-size:11px!important;color:white!important;font-weight:500;padding:0px!important;margin:0px!important"><?php echo $role; ?></p> -->
-
     </div>
 
     <ul class="list-unstyled components">
-
-
-
         <li class="main-xt text-center mb-2">
             <a href=" http://localhost:9090/MExtractor/login.php" target="_blank" style="letter-spacing:0.5px;font-size:15px!important;font-weight:600">MExtractor</a>
         </li>
-
 
         <li style="background-color:#292E34!important;" class="text-center main-1">
             <a href="#" style="font-size:12.5px!important">PowerBI Dashboards</a>
@@ -69,22 +58,22 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
 
                 <?php if ($sales_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="online_booking_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">○ Online Booking</a></li>
+                            style="letter-spacing:0.5px;text-align:left">â—‹ Online Booking</a></li>
                 <?php } ?>
 
                 <?php if ($sc_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="supply_chain_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">○ Supply Chain</a></li>
+                            style="letter-spacing:0.5px;text-align:left">â—‹ Supply Chain</a></li>
                 <?php } ?>
 
                 <?php if ($it_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="technology_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">○ Technology</a></li>
+                            style="letter-spacing:0.5px;text-align:left">â—‹ Technology</a></li>
                 <?php } ?>
 
                 <?php if ($finance_dashboard == 'Yes' or $be_depart == 'super') { ?>
                     <li><a href="finance_bidashboard.php" class="sub-menu-a-bg"
-                            style="letter-spacing:0.5px;text-align:left">○ Finance</a></li>
+                            style="letter-spacing:0.5px;text-align:left">â—‹ Finance</a></li>
                 <?php } ?>
 
             </ul>
@@ -94,22 +83,55 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
             <a href="#" style="letter-spacing:0.5px;font-size:12.5px!important">WorkFlow</a>
         </li>
 
-
-
         <li class="">
-            <a href="gatepass.php" style="letter-spacing:0.5px">
-                Gatepass
-                <i class="fa-solid fa-star"
-                    style="color:#ffcc00;font-size:12px;margin-left:6px;"></i>
+            <a href="assets_management_home.php" style="letter-spacing:0.5px">
+                Asset Management
                 <i class="fas fa-plus toggle-icon"></i>
             </a>
         </li>
 
-
+        <li class="">
+            <a href="cc_home.php" style="letter-spacing:0.5px">
+                Change Control
+                <i class="fas fa-plus toggle-icon"></i>
+            </a>
+        </li>
 
         <li class="">
-            <a href="workorder_home.php" style="letter-spacing:0.5px">
-                Work Order
+            <a href="erp_access_home.php" style="letter-spacing:0.5px">
+                ERP Access
+                <i class="fas fa-plus toggle-icon"></i>
+            </a>
+        </li>
+
+        <li class="mb-1">
+            <a href="#pageSubmenu19" data-bs-toggle="collapse" aria-expanded="false"
+                style="letter-spacing:0.5px;text-align:left">
+                Expense Forms
+                <i class="fa-solid fa-arrows-up-down"></i>
+                <i class="fas fa-plus toggle-icon" data-target="#pageSubmenu19"></i>
+            </a>
+
+            <ul class="collapse list-unstyled" id="pageSubmenu19">
+                <li class="mb-1">
+                    <a href="cash_purchase_home.php" class="sub-menu-a-bg"
+                        style="letter-spacing:0.5px;text-align:left">
+                        â—‹ Cash Purchase
+                    </a>
+                </li>
+
+                <li class="mb-1">
+                    <a href="expense_claim_home.php" class="sub-menu-a-bg"
+                        style="letter-spacing:0.5px;text-align:left">
+                        â—‹ Expense Claim
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="">
+            <a href="gatepass.php" style="letter-spacing:0.5px">
+                Gatepass
                 <i class="fas fa-plus toggle-icon"></i>
             </a>
         </li>
@@ -121,40 +143,17 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
             </a>
         </li>
 
+        <li class="">
+            <a href="new_hiring_home.php" style="letter-spacing:0.5px">
+                New Hiring Form
+                <i class="fas fa-plus toggle-icon"></i>
+            </a>
+        </li>
+
         <?php if ($be_depart == 'it' or $be_depart == 'hr' or $be_depart == 'super') { ?>
             <li class="">
                 <a href="new_user_home.php" style="letter-spacing:0.5px">
                     New User
-                    <i class="fas fa-plus toggle-icon"></i>
-                </a>
-            </li>
-        <?php } ?>
-        <li class="">
-            <a href="erp_access_home.php" style="letter-spacing:0.5px">
-                ERP Access
-                <i class="fas fa-plus toggle-icon"></i>
-            </a>
-        </li>
-
-        <li class="">
-            <a href="sa_home.php" style="letter-spacing:0.5px">
-                Staff Allocation
-                <i class="fas fa-plus toggle-icon"></i>
-            </a>
-        </li>
-
-        <li class="">
-            <a href="assets_management_home.php" style="letter-spacing:0.5px">
-                Asset Management
-                <i class="fas fa-plus toggle-icon"></i>
-            </a>
-        </li>
-
-
-        <?php if (($username == 'admin' && $fname == 'Jawaid Iqbal') or ($username == 'farhan' && $fname == 'Farhan Abid') or $be_depart == 'it' or $be_depart == 'dir' or $fname == 'Mustafa Ahmed Jamal' or $fname == 'Syed Jawwad Ali' or $be_depart == 'admin' or $be_depart == 'super') { ?>
-            <li class="">
-                <a href="vehicle_listall" style="letter-spacing:0.5px">
-                    Vehicle Management
                     <i class="fas fa-plus toggle-icon"></i>
                 </a>
             </li>
@@ -170,50 +169,11 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
         <?php } ?>
 
         <li class="">
-            <a href="cc_home.php" style="letter-spacing:0.5px">
-                Change Control
+            <a href="sa_home.php" style="letter-spacing:0.5px">
+                Staff Allocation
                 <i class="fas fa-plus toggle-icon"></i>
             </a>
         </li>
-
-        <!-- <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'super') { ?>
-            <li class="">
-                <a href="salesmain_productlist" style="letter-spacing:0.5px">
-                    Scheme Verification
-                    <i class="fas fa-plus toggle-icon"></i>
-                </a>
-            </li>
-        <?php } ?> -->
-
-        <!-- <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'super') { ?>
-        <li class="">
-            <a href="lab_req_form_list" style="letter-spacing:0.5px">
-            Labelling Requirement
-                <i class="fas fa-plus toggle-icon" ></i>
-            </a>
-        </li>
-        <?php } ?> -->
-
-        <!-- <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'hr' or $be_depart == 'super') { ?>
-            <li class="">
-                <a href="appraisal_forms" style="letter-spacing:0.5px">
-                    Appraisal Forms
-                    <i class="fas fa-plus toggle-icon"></i>
-                </a>
-            </li>
-        <?php } ?> -->
-
-
-        <!-- <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'hr' or $be_depart == 'super') { ?>
-            <li class="">
-                <a href="ot_form" style="letter-spacing:0.5px">
-                    Over Time
-                    <i class="fas fa-plus toggle-icon"></i>
-                </a>
-            </li>
-        <?php } ?> -->
-
-
 
         <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'super') { ?>
             <li class="">
@@ -224,82 +184,21 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
             </li>
         <?php } ?>
 
-        <!-- <?php if ($be_depart == 'it' or $be_depart == 'dir' or $be_depart == 'regu' or $be_depart == 'super') { ?>
+        <?php if (($username == 'admin' && $fname == 'Jawaid Iqbal') or ($username == 'farhan' && $fname == 'Farhan Abid') or $be_depart == 'it' or $be_depart == 'dir' or $fname == 'Mustafa Ahmed Jamal' or $fname == 'Syed Jawwad Ali' or $be_depart == 'admin' or $be_depart == 'super') { ?>
             <li class="">
-                <a href="newproductidea_home.php" style="letter-spacing:0.5px">
-                    New Product Idea
+                <a href="vehicle_listall" style="letter-spacing:0.5px">
+                    Vehicle Management
                     <i class="fas fa-plus toggle-icon"></i>
                 </a>
             </li>
-        <?php } ?> -->
+        <?php } ?>
 
         <li class="">
-            <a href="new_hiring_home.php" style="letter-spacing:0.5px">
-                New Hiring Form
+            <a href="workorder_home.php" style="letter-spacing:0.5px">
+                Work Order
                 <i class="fas fa-plus toggle-icon"></i>
             </a>
         </li>
-        <!-- <li class="">
-            <a href="expense_home.php" style="letter-spacing:0.5px">
-                Expense Forms
-                <i class="fas fa-plus toggle-icon"></i>
-            </a>
-        </li> -->
-
-        <!-- expense dropdown start  -->
-        <!-- <li class="mb-1">
-            <a href="#pageSubmenu19" data-bs-toggle="collapse" aria-expanded="false"
-                style="letter-spacing:0.5px;text-align:left">
-                Expense Forms <i class="fa-solid fa-arrows-up-down"></i>
-                <i class="fas fa-plus toggle-icon" data-target="#pageSubmenu19"></i>
-            </a>
-            <ul class="collapse list-unstyled" id="pageSubmenu19">
-
-                <li class="mb-1"><a href="cash_purchase_home.php" class="sub-menu-a-bg"
-                        style="letter-spacing:0.5px;text-align:left">○ Cash Purchase</a></li>
-
-                <li class="mb-1"><a href="expense_claim_home.php" class="sub-menu-a-bg"
-                        style="letter-spacing:0.5px;text-align:left">○ Expense Claim</a></li>
-            </ul>
-        </li> -->
-
-        <li class="mb-1">
-            <a href="#pageSubmenu19" data-bs-toggle="collapse" aria-expanded="false"
-                style="letter-spacing:0.5px;text-align:left">
-                Expense Forms
-                <i class="fa-solid fa-star"
-                    style="
-               color:#ffcc00;
-               font-size:12px;
-               margin-left:6px;
-               vertical-align:middle;
-           "></i>
-                <i class="fa-solid fa-arrows-up-down"></i>
-                <i class="fas fa-plus toggle-icon" data-target="#pageSubmenu19"></i>
-            </a>
-
-            <ul class="collapse list-unstyled" id="pageSubmenu19">
-
-                <li class="mb-1">
-                    <a href="cash_purchase_home.php" class="sub-menu-a-bg"
-                        style="letter-spacing:0.5px;text-align:left">
-                        ○ Cash Purchase
-                    </a>
-                </li>
-
-                <li class="mb-1">
-                    <a href="expense_claim_home.php" class="sub-menu-a-bg"
-                        style="letter-spacing:0.5px;text-align:left">
-                        ○ Expense Claim
-                    </a>
-                </li>
-
-            </ul>
-        </li>
-
-        <!-- expense dropdown end -->
-
-
     </ul>
     <ul class="list-unstyled CTAs">
         <li class="main-3">
@@ -310,9 +209,6 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
         <?php if ($be_depart == 'it') { ?>
             <li><a href="admin_panel.php" class="mt-3" style="letter-spacing:0.5px;font-size:13px!important;background-color:#FFFCFB!important;color:black!important">Admin Panel</a></li>
         <?php } ?>
-
-
-
     </ul>
 
 </nav>
