@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container">
   <div class="row">
     <div class="col-md-5">
@@ -113,12 +115,14 @@ include "header.php";
 
           <a class="menu-item" href="erpAccessForm.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Request new ERP access permissions.</span>
           </a>
 
           <a class="menu-item" href="erp_userlist.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Check earlier ERP access submissions.</span>
           </a>
 
           <?php if ($be_role == 'approver' || $be_depart == 'it' || $be_depart == 'super') { ?>
@@ -127,12 +131,14 @@ include "header.php";
 
             <a class="menu-item" href="erp_departmenthead_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-list-check"></i></span>
-              <span>Pending Request</span>
+              <span class="menu-label">Pending Request</span>
+              <span class="menu-desc">Approve department pending ERP requests.</span>
             </a>
 
             <a class="menu-item" href="erp_dhead_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-folder-open"></i></span>
-              <span>Department All Requests</span>
+              <span class="menu-label">Department All Requests</span>
+              <span class="menu-desc">Browse all department access requests.</span>
             </a>
           <?php } ?>
 
@@ -142,7 +148,8 @@ include "header.php";
 
             <a class="menu-item" href="erp_ithead_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-user-gear"></i></span>
-              <span>Pending Request</span>
+              <span class="menu-label">Pending Request</span>
+              <span class="menu-desc">Handle IT side access approvals.</span>
             </a>
 
             <!-- Dashboard -->
@@ -150,7 +157,8 @@ include "header.php";
 
             <a class="menu-item" href="erp_access_dashboard.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Monitor ERP request status and trends.</span>
             </a>
           <?php } ?>
 

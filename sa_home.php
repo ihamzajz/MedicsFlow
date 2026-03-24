@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -113,12 +115,14 @@ include "header.php";
 
           <a class="menu-item" href="sa_form.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Create Form</span>
+            <span class="menu-label">Create Form</span>
+            <span class="menu-desc">Start a new staff allocation request.</span>
           </a>
 
           <a class="menu-item" href="sa_dataentry_list.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-keyboard"></i></span>
-            <span>Data Input</span>
+            <span class="menu-label">Data Input</span>
+            <span class="menu-desc">Enter daily allocation and manpower data.</span>
           </a>
 
           <?php if ($sa_role == 'approver' || $be_depart == 'it' || $be_depart == 'super') { ?>
@@ -127,17 +131,20 @@ include "header.php";
 
             <a class="menu-item" href="sa_head_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-check"></i></span>
-              <span>Incharge Head Approval</span>
+              <span class="menu-label">Incharge Head Approval</span>
+              <span class="menu-desc">Approve incharge and head allocations.</span>
             </a>
 
             <a class="menu-item" href="sa_dataexport_production.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-file-export"></i></span>
-              <span>Daily Report</span>
+              <span class="menu-label">Daily Report</span>
+              <span class="menu-desc">Export production allocation reports daily.</span>
             </a>
 
             <a class="menu-item" href="sa_head_edit_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-pen-to-square"></i></span>
-              <span>Edit</span>
+              <span class="menu-label">Edit</span>
+              <span class="menu-desc">Update staff allocation entries quickly.</span>
             </a>
           <?php } ?>
 
@@ -147,12 +154,14 @@ include "header.php";
 
             <a class="menu-item" href="sa_fpna_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span>Finance Approval</span>
+              <span class="menu-label">Finance Approval</span>
+              <span class="menu-desc">Process finance allocation verifications.</span>
             </a>
 
             <a class="menu-item" href="sa_dataexport_finance.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-file-export"></i></span>
-              <span>Daily Report</span>
+              <span class="menu-label">Daily Report</span>
+              <span class="menu-desc">Export finance side allocation reports.</span>
             </a>
           <?php } ?>
 
@@ -170,7 +179,8 @@ include "header.php";
 
             <a class="menu-item" href="sa_dashboard_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Batch-Wise Report</span>
+              <span class="menu-label">Batch-Wise Report</span>
+              <span class="menu-desc">Analyze allocation data by batch.</span>
             </a>
           <?php } ?>
 

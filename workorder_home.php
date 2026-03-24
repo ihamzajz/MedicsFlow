@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -117,12 +119,14 @@ include "header.php";
 
           <a class="menu-item" href="workorderForm.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Create a new maintenance request quickly.</span>
           </a>
 
           <a class="menu-item" href="workorder_userlist.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Review all previously submitted workorders.</span>
           </a>
 
           <?php if ($be_role == 'approver' or $be_depart == 'super') { ?>
@@ -131,12 +135,14 @@ include "header.php";
 
             <a class="menu-item" href="workorder_head_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-check"></i></span>
-              <span>Head Pending Workorder</span>
+              <span class="menu-label">Head Pending Workorder</span>
+              <span class="menu-desc">Approve or reject department pending requests.</span>
             </a>
 
             <a class="menu-item" href="workorder_departmenthead_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-chart-line"></i></span>
-              <span>Department History</span>
+              <span class="menu-label">Department History</span>
+              <span class="menu-desc">Track department wise workorder records.</span>
             </a>
           <?php } ?>
 
@@ -146,22 +152,26 @@ include "header.php";
 
             <a class="menu-item" href="workorder_engineering_estimatecost.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-calculator"></i></span>
-              <span>Cost Evaluation</span>
+              <span class="menu-label">Cost Evaluation</span>
+              <span class="menu-desc">Estimate repair cost before processing.</span>
             </a>
 
             <a class="menu-item" href="workorder_engineering_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-list"></i></span>
-              <span>Cost less than 10,000</span>
+              <span class="menu-label">Cost less than 10,000</span>
+              <span class="menu-desc">Handle lower value engineering workorders.</span>
             </a>
 
             <a class="menu-item" href="workorder_engineering_closeout.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-circle-check"></i></span>
-              <span>Closeout</span>
+              <span class="menu-label">Closeout</span>
+              <span class="menu-desc">Mark completed engineering jobs properly.</span>
             </a>
 
             <a class="menu-item" href="eng_workorder_rp.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">View engineering workorder status summaries.</span>
             </a>
           <?php } ?>
 
@@ -171,12 +181,14 @@ include "header.php";
 
             <a class="menu-item" href="workorder_engineering_closeout.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-circle-check"></i></span>
-              <span>Closeout</span>
+              <span class="menu-label">Closeout</span>
+              <span class="menu-desc">Close assigned engineering requests fast.</span>
             </a>
 
             <a class="menu-item" href="eng_workorder_rp.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Monitor engineering queue and progress.</span>
             </a>
           <?php } ?>
 
@@ -186,22 +198,26 @@ include "header.php";
 
             <a class="menu-item" href="workorder_admin_estimatecost.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-calculator"></i></span>
-              <span>Cost Evaluation</span>
+              <span class="menu-label">Cost Evaluation</span>
+              <span class="menu-desc">Assess admin workorder cost approvals.</span>
             </a>
 
             <a class="menu-item" href="workorder_admin_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-list"></i></span>
-              <span>Cost less than 10,000</span>
+              <span class="menu-label">Cost less than 10,000</span>
+              <span class="menu-desc">Review lower value admin requests.</span>
             </a>
 
             <a class="menu-item" href="workorder_admin_closeout.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-circle-check"></i></span>
-              <span>Closeout</span>
+              <span class="menu-label">Closeout</span>
+              <span class="menu-desc">Finalize completed admin work orders.</span>
             </a>
 
             <a class="menu-item" href="admin_workorder_rp.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">See admin workorder activity at a glance.</span>
             </a>
           <?php } ?>
 
@@ -211,7 +227,8 @@ include "header.php";
 
             <a class="menu-item" href="workorder_finance_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span>Finance Workorder Requests</span>
+              <span class="menu-label">Finance Workorder Requests</span>
+              <span class="menu-desc">Review finance stage workorder approvals.</span>
             </a>
           <?php } ?>
 

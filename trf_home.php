@@ -1,124 +1,70 @@
 <?php
 include "header.php";
+include "workflow_home_theme.php";
 ?>
+
 <div class="container">
-    <div class="row ">
-        <div class="col-md-4">
-            <h5 class="pb-2 pt-3" style="font-weight:600">Travel Request Form</h5>
-            <table class="table table-home" style="border:0.3px solid black!important">
-                <thead>
-                    <tr>
-                        <th class="home-heading">
-                            Forms
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="home-heading">
-                            <a href="trf.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Submit Form
-                            </a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="trf_userlist.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Request History</i>
-                            </a>
-                        </td>
-                    </tr>
-                    <!-- Department head -->
-                    <tr>
-                        <th colspan="2" class="home-heading">Department Head Approval
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="trf_head_list.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Department Head Approval</i>
-                            </a>
-                        </td>
-                    </tr>
-                    <?php if ($fname == 'Jawaid Iqbal' or $fname == 'Syed Jawwad Ali' or $fname == 'Zohaib Uddin Ansari'  or $be_depart == 'it') { ?>
-                        <!-- Admin Approval -->
-                        <tr>
-                            <th colspan="2" class="home-heading">Admin Approval
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="trf_admin_list.php">
-                                    <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Admin Approval</i>
-                                </a>
-                            </td>
-                        </tr>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="home-shell mb-3">
+                <div class="home-heading">Travel Request Workflow</div>
+
+                <div class="inner-card">
+                    <div class="section-title first">Forms</div>
+
+                    <a class="menu-item" href="trf.php">
+                        <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
+                        <span class="menu-label">Submit Form</span>
+                        <span class="menu-desc">Create a new travel request.</span>
+                    </a>
+
+                    <a class="menu-item" href="trf_userlist.php">
+                        <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                        <span class="menu-label">Request History</span>
+                        <span class="menu-desc">Review previously submitted travel forms.</span>
+                    </a>
+
+                    <div class="section-title">Department Head Approval</div>
+
+                    <a class="menu-item" href="trf_head_list.php">
+                        <span class="menu-icon icon-amber"><i class="fa-solid fa-check"></i></span>
+                        <span class="menu-label">Department Head Approval</span>
+                        <span class="menu-desc">Approve department travel applications.</span>
+                    </a>
+
+                    <?php if ($fname == 'Jawaid Iqbal' or $fname == 'Syed Jawwad Ali' or $fname == 'Zohaib Uddin Ansari' or $be_depart == 'it') { ?>
+                        <div class="section-title">Admin Approval</div>
+
+                        <a class="menu-item" href="trf_admin_list.php">
+                            <span class="menu-icon icon-blue"><i class="fa-solid fa-user-shield"></i></span>
+                            <span class="menu-label">Admin Approval</span>
+                            <span class="menu-desc">Review travel logistics and admin checks.</span>
+                        </a>
                     <?php } ?>
 
-                    <?php if (($fname == 'Syed Owais Ahmed' or $fname == 'Muhammad Yaman' or $fname == 'Muhammad Yaman' or $fname == 'Danish Tanveer' or $fname == 'Mustafa Ahmed Jamal' or $fname == 'Nasarullah Khan') or $be_depart == 'it') { ?>
-                        <tr>
-                            <th colspan="2" class="home-heading">Finance Approval
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="trf_finance_list.php">
-                                    <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Finance Approval</i>
-                                </a>
-                            </td>
-                        </tr>
+                    <?php if (($fname == 'Syed Owais Ahmed' or $fname == 'Muhammad Yaman' or $fname == 'Danish Tanveer' or $fname == 'Mustafa Ahmed Jamal' or $fname == 'Nasarullah Khan') or $be_depart == 'it') { ?>
+                        <div class="section-title">Finance Approval</div>
 
+                        <a class="menu-item" href="trf_finance_list.php">
+                            <span class="menu-icon icon-amber"><i class="fa-solid fa-file-invoice-dollar"></i></span>
+                            <span class="menu-label">Finance Approval</span>
+                            <span class="menu-desc">Validate budget and finance approval.</span>
+                        </a>
                     <?php } ?>
 
-                    <!-- CFO Approval -->
-                    <!-- <tr>
-                        <th colspan="2" class="home-heading">CFO Approval
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="workorder_head_list.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; CFO Approval</i>
-                            </a>
-                        </td>
-                    </tr> -->
+                    <div class="section-title">Dashboard</div>
 
-                    <!-- CEO Approval -->
-                    <!-- <tr>
-                        <th colspan="2" class="home-heading">CEO Approval
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="workorder_head_list.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; CEO Approval</i>
-                            </a>
-                        </td>
-                    </tr> -->
-
-                    <!-- Dashboard Approval -->
-                    <tr>
-                        <th colspan="2" class="home-heading">Dashboard
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="workorder_head_list.php">
-                                <i class="fa-solid fa-arrow-right-long"></i> &nbsp; Dashboard</i>
-                            </a>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+                    <a class="menu-item" href="trf_dashboard.php">
+                        <span class="menu-icon icon-blue"><i class="fa-solid fa-chart-line"></i></span>
+                        <span class="menu-label">Dashboard</span>
+                        <span class="menu-desc">Track travel requests and approvals.</span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-
-
-</div>
-</div>
 </div>
 
 <?php
-include 'footer.php'
+include 'footer.php';
 ?>

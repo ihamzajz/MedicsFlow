@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container">
   <div class="row">
     <div class="col-md-5">
@@ -119,7 +121,8 @@ include "header.php";
             <span class="menu-icon icon-green">
               <i class="fa-solid fa-plus"></i>
             </span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Create a new user onboarding request.</span>
           </a>
 
           <?php if ($fname == 'Taha Ahmed' || $be_depart == 'it' || $be_depart == 'super') { ?>
@@ -130,7 +133,8 @@ include "header.php";
               <span class="menu-icon icon-amber">
                 <i class="fa-solid fa-list-check"></i>
               </span>
-              <span>Pending Requests</span>
+              <span class="menu-label">Pending Requests</span>
+              <span class="menu-desc">Review HR side onboarding requests.</span>
             </a>
           <?php } ?>
 
@@ -142,7 +146,8 @@ include "header.php";
               <span class="menu-icon icon-amber">
                 <i class="fa-solid fa-user-gear"></i>
               </span>
-              <span>IT Approval</span>
+              <span class="menu-label">IT Approval</span>
+              <span class="menu-desc">Prepare accounts and access approvals.</span>
             </a>
 
             <!-- Dashboard -->
@@ -152,7 +157,8 @@ include "header.php";
               <span class="menu-icon icon-blue">
                 <i class="fa-solid fa-gauge-high"></i>
               </span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Track onboarding status and reports.</span>
             </a>
           <?php } ?>
 

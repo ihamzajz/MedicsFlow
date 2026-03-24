@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -117,12 +119,14 @@ include "header.php";
 
           <a class="menu-item" href="new_hiring_form.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Start a new hiring requisition.</span>
           </a>
 
           <a class="menu-item" href="new_hiring_form_request_history.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Review previous hiring form requests.</span>
           </a>
 
           <?php if ($be_role == 'approver' or $be_depart == 'it' or $be_depart == 'super') { ?>
@@ -131,12 +135,14 @@ include "header.php";
 
             <a class="menu-item" href="new_hiring_form_head_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-check"></i></span>
-              <span>HOD Approval</span>
+              <span class="menu-label">HOD Approval</span>
+              <span class="menu-desc">Approve department manpower requirements.</span>
             </a>
 
             <a class="menu-item" href="new_hiring_form_dashboard_department.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-chart-line"></i></span>
-              <span>Department History</span>
+              <span class="menu-label">Department History</span>
+              <span class="menu-desc">See department hiring request history.</span>
             </a>
           <?php } ?>
 
@@ -146,12 +152,14 @@ include "header.php";
 
             <a class="menu-item" href="new_hiring_form_ceo_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-stamp"></i></span>
-              <span>CEO Approval</span>
+              <span class="menu-label">CEO Approval</span>
+              <span class="menu-desc">Review executive hiring approvals here.</span>
             </a>
 
             <a class="menu-item" href="new_hiring_form_dashboard.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Track hiring progress and decisions.</span>
             </a>
           <?php } ?>
 
@@ -161,12 +169,14 @@ include "header.php";
 
             <a class="menu-item" href="new_hiring_form_hr_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-user-check"></i></span>
-              <span>HR Approval</span>
+              <span class="menu-label">HR Approval</span>
+              <span class="menu-desc">Handle HR review and recruitment flow.</span>
             </a>
 
             <a class="menu-item" href="new_hiring_form_dashboard.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">View hiring pipeline and status.</span>
             </a>
           <?php } ?>
 

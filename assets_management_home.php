@@ -93,6 +93,8 @@ body {
 .icon-amber { color:#f59f00; background:rgba(245,159,0,0.14); }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container">
   <div class="row">
     <div class="col-md-5">
@@ -111,7 +113,8 @@ body {
 
             <a class="menu-item" href="assets_list.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-boxes-stacked"></i></span>
-              <span>Assets</span>
+              <span class="menu-label">Assets</span>
+              <span class="menu-desc">Browse and manage asset records.</span>
             </a>
 
           <?php } elseif ($asset_user == 'no') { ?>
@@ -119,7 +122,8 @@ body {
 
             <a class="menu-item" href="assets_list_user.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-list"></i></span>
-              <span>Asset List</span>
+              <span class="menu-label">Asset List</span>
+              <span class="menu-desc">View asset items assigned to you.</span>
             </a>
 
           <?php } ?>

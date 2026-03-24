@@ -99,6 +99,8 @@ include("header.php");
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -117,12 +119,14 @@ include("header.php");
 
           <a class="menu-item" href="cash_purchase_form.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Create a new cash purchase request.</span>
           </a>
 
           <a class="menu-item" href="cash_purchase_userlist.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Review your submitted purchase requests.</span>
           </a>
 
           <?php if ($fname == 'Jawaid Iqbal' || $fname == 'Syed Jawwad Ali' || $fname == 'Zohaib Uddin Ansari' || $be_depart == 'it' || $be_depart == 'super') { ?>
@@ -131,7 +135,8 @@ include("header.php");
 
             <a class="menu-item" href="cash_purchase_admin_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-user-shield"></i></span>
-              <span>Admin Approval</span>
+              <span class="menu-label">Admin Approval</span>
+              <span class="menu-desc">Process admin level purchase approvals.</span>
             </a>
           <?php } ?>
 
@@ -141,7 +146,8 @@ include("header.php");
 
             <a class="menu-item" href="cash_purchase_finance_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span>Finance Approval</span>
+              <span class="menu-label">Finance Approval</span>
+              <span class="menu-desc">Verify finance side payment requests.</span>
             </a>
           <?php } ?>
 
@@ -151,7 +157,8 @@ include("header.php");
 
             <a class="menu-item" href="cash_purchase_ceo_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-stamp"></i></span>
-              <span>CEO Approval</span>
+              <span class="menu-label">CEO Approval</span>
+              <span class="menu-desc">Review high level purchase decisions.</span>
             </a>
           <?php } ?>
 
@@ -161,7 +168,8 @@ include("header.php");
 
             <a class="menu-item" href="cash_purchase_dashboard.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Track purchase trends and approvals.</span>
             </a>
           <?php } ?>
 

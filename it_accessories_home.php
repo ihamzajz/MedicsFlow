@@ -99,6 +99,8 @@ include "header.php";
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -119,14 +121,16 @@ include "header.php";
             <span class="menu-icon icon-green">
               <i class="fa-solid fa-plus"></i>
             </span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Request required IT accessory items.</span>
           </a>
 
           <a class="menu-item" href="itacc_userlist.php">
             <span class="menu-icon icon-blue">
               <i class="fa-solid fa-clock-rotate-left"></i>
             </span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Review your IT accessory requests.</span>
           </a>
 
           <?php if ($be_depart == 'it' or $be_depart == 'super') { ?>
@@ -137,14 +141,16 @@ include "header.php";
               <span class="menu-icon icon-amber">
                 <i class="fa-solid fa-hourglass-half"></i>
               </span>
-              <span>Pending Request</span>
+              <span class="menu-label">Pending Request</span>
+              <span class="menu-desc">Approve outstanding accessory requests.</span>
             </a>
 
             <a class="menu-item" href="itacc_dashboard.php">
               <span class="menu-icon icon-blue">
                 <i class="fa-solid fa-gauge-high"></i>
               </span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">Track IT accessory request activity.</span>
             </a>
           <?php } ?>
 

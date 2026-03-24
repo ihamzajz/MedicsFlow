@@ -99,6 +99,8 @@ include("header.php");
   }
 </style>
 
+<?php include "workflow_home_theme.php"; ?>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-5">
@@ -117,12 +119,14 @@ include("header.php");
 
           <a class="menu-item" href="expense_claim_form.php">
             <span class="menu-icon icon-green"><i class="fa-solid fa-plus"></i></span>
-            <span>Submit Form</span>
+            <span class="menu-label">Submit Form</span>
+            <span class="menu-desc">Create a new employee expense claim.</span>
           </a>
 
           <a class="menu-item" href="expense_claim_userlist.php">
             <span class="menu-icon icon-blue"><i class="fa-solid fa-clock-rotate-left"></i></span>
-            <span>Request History</span>
+            <span class="menu-label">Request History</span>
+            <span class="menu-desc">Review all submitted expense claims.</span>
           </a>
 
           <?php if ($fname == 'Jawaid Iqbal' || $fname == 'Syed Jawwad Ali' || $fname == 'Zohaib Uddin Ansari' || $be_depart == 'it' || $be_depart == 'super') { ?>
@@ -131,7 +135,8 @@ include("header.php");
 
             <a class="menu-item" href="expense_claim_admin_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-user-shield"></i></span>
-              <span>Admin Approval</span>
+              <span class="menu-label">Admin Approval</span>
+              <span class="menu-desc">Check admin review and approvals.</span>
             </a>
           <?php } ?>
 
@@ -141,7 +146,8 @@ include("header.php");
 
             <a class="menu-item" href="expense_claim_finance_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-file-invoice-dollar"></i></span>
-              <span>Finance Approval</span>
+              <span class="menu-label">Finance Approval</span>
+              <span class="menu-desc">Validate payable and reimbursement claims.</span>
             </a>
           <?php } ?>
 
@@ -151,7 +157,8 @@ include("header.php");
 
             <a class="menu-item" href="expense_claim_ceo_list.php">
               <span class="menu-icon icon-amber"><i class="fa-solid fa-stamp"></i></span>
-              <span>CEO Approval</span>
+              <span class="menu-label">CEO Approval</span>
+              <span class="menu-desc">Finalize top level claim approvals.</span>
             </a>
           <?php } ?>
 
@@ -172,7 +179,8 @@ include("header.php");
 
             <a class="menu-item" href="expense_claim_dashboard.php">
               <span class="menu-icon icon-blue"><i class="fa-solid fa-gauge-high"></i></span>
-              <span>Dashboard</span>
+              <span class="menu-label">Dashboard</span>
+              <span class="menu-desc">See claim volumes and approval status.</span>
             </a>
           <?php } ?>
 
