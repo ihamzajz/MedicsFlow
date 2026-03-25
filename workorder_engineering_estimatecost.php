@@ -1,98 +1,82 @@
 <?php
 ob_start();
-session_start();
-include "dbconfig.php";
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-$head_email = $_SESSION['head_email'] ?? '';
+workorder_require_login();
+if (!workorder_can_engineering_act()) {
+  workorder_abort(403, 'You are not allowed to access engineering cost evaluation.');
+}
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'vendor/autoload.php';
-$mail = new PHPMailer(true);
+$flash = workorder_take_flash();
 
 /* =========================================================
    ✅ Keep your EXISTING "submit cost" logic (same behavior)
    ✅ Only change: do NOT echo PHPMailer error to user
    ========================================================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
-  $reqid = (int)($_POST['request_id'] ?? 0);
+  workorder_require_post_csrf();
+
+  $reqid = workorder_get_request_id_from_post();
   $budgetKey = 'budget_' . $reqid;
   $btnKey    = 'budget_btn_' . $reqid;
 
   if ($reqid > 0 && isset($_POST[$btnKey])) {
-    $budget = $_POST[$budgetKey] ?? '';
-    $budget_safe = mysqli_real_escape_string($conn, (string)$budget);
-
-    $update = "UPDATE workorder_form SET amount = '$budget_safe' WHERE id = '$reqid'";
-    $update_q = mysqli_query($conn, $update);
-
-    if ($update_q) {
-
-      if ((float)$budget <= 10000) {
-        try {
-          $mail->SMTPDebug = 0;
-          $mail->Debugoutput = 'error_log';
-          $mail->isSMTP();
-          $mail->Host = 'smtp.office365.com';
-          $mail->SMTPAuth = true;
-          $mail->Username = 'info@medicslab.com';
-          $mail->Password = 'kcmzrskfgmwzzshz';
-          $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-          $mail->Port = 587;
-
-          $mail->setFrom('info@medicslab.com', 'Medics Digital form');
-          $mail->addAddress('taha.khan@medicslab.com', 'Engineering Head');
-
-          $mail->isHTML(true);
-          $mail->Subject = "Workorder Notification";
-          $mail->Body = '
-            <p>Dear Engineering Team,</p>
-            <p>A new Work Order request has been submitted and is currently awaiting your review and approval. Please log in to MedicsFlow to review the details and take the required action at your earliest convenience.</p>
-            <p>Regards,<br>MedicsFlow</p>
-          ';
-          $mail->send();
-        } catch (Exception $e) {
-          error_log("PHPMailer error (<=10000): " . $mail->ErrorInfo);
-          header("Location: workorder_engineering_estimatecost.php");
-          exit;
-        }
-      } else {
-        try {
-          $mail->SMTPDebug = 0;
-          $mail->Debugoutput = 'error_log';
-          $mail->isSMTP();
-          $mail->Host = 'smtp.office365.com';
-          $mail->SMTPAuth = true;
-          $mail->Username = 'info@medicslab.com';
-          $mail->Password = 'kcmzrskfgmwzzshz';
-          $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-          $mail->Port = 587;
-
-          $mail->setFrom('info@medicslab.com', 'Medics Digital form');
-          $mail->addAddress('danish.tanveer@medicslab.com', 'Danish Tanveer');
-
-          $mail->isHTML(true);
-          $mail->Subject = "Workorder Notification";
-          $mail->Body = '
-            <p>Dear Finance Team,</p>
-            <p>A new Work Order request has been submitted and is currently awaiting your review and approval. Please log in to MedicsFlow to review the details and take the required action at your earliest convenience.</p>
-            <p>Regards,<br>MedicsFlow</p>
-          ';
-          $mail->send();
-        } catch (Exception $e) {
-          error_log("PHPMailer error (>10000): " . $mail->ErrorInfo);
-          header("Location: workorder_engineering_estimatecost.php");
-          exit;
-        }
-      }
-
-      header("Location: workorder_engineering_estimatecost.php");
-      exit;
-    } else {
-      echo '<script>alert("failed!"); window.location.href="workorder_engineering_estimatecost.php";</script>';
-      exit;
+    $budget = trim((string)($_POST[$budgetKey] ?? ''));
+    if ($budget === '' || !is_numeric($budget) || (float)$budget < 0) {
+      workorder_flash('danger', 'Please enter a valid estimate amount.');
+      workorder_redirect('workorder_engineering_estimatecost.php');
     }
+
+    $request = workorder_fetch_request($reqid);
+    if (!$request || strcasecmp((string)($request['depart_type'] ?? ''), 'Engineering') !== 0 || (string)($request['amount'] ?? '') !== 'TBD') {
+      workorder_flash('danger', 'This request is no longer available for cost evaluation.');
+      workorder_redirect('workorder_engineering_estimatecost.php');
+    }
+
+    $stmt = workorder_prepare("UPDATE workorder_form SET amount = ? WHERE id = ? AND depart_type = 'Engineering' AND amount = 'TBD'");
+    $stmt->bind_param('si', $budget, $reqid);
+    $stmt->execute();
+    $updated = $stmt->affected_rows > 0;
+    $stmt->close();
+
+    if (!$updated) {
+      workorder_flash('danger', 'This request was already updated by someone else.');
+      workorder_redirect('workorder_engineering_estimatecost.php');
+    }
+
+    workorder_log_action($reqid, 'engineering', 'estimated', 'Estimated amount set to ' . $budget);
+
+    $mailWarning = false;
+    try {
+      $mail = workorder_create_mailer();
+      if ((float)$budget <= 10000) {
+        $route = workorder_mail_route('engineering_department');
+        workorder_mail_add_address($mail, $route['email'], $route['name']);
+        $mail->Subject = 'Workorder Notification';
+        $mail->Body = '
+          <p>Dear Engineering Team,</p>
+          <p>A work order request with estimated amount <strong>' . workorder_h($budget) . '</strong> is now awaiting your approval in MedicsFlow.</p>
+          <p>Regards,<br>MedicsFlow</p>
+        ';
+      } else {
+        $route = workorder_mail_route('finance_department');
+        workorder_mail_add_address($mail, $route['email'], $route['name']);
+        $mail->Subject = 'Workorder Notification';
+        $mail->Body = '
+          <p>Dear Finance Team,</p>
+          <p>A work order request with estimated amount <strong>' . workorder_h($budget) . '</strong> is now awaiting your approval in MedicsFlow.</p>
+          <p>Regards,<br>MedicsFlow</p>
+        ';
+      }
+      workorder_mail_deliver($mail);
+    } catch (Throwable $e) {
+      error_log('Workorder engineering estimate mail failed: ' . $e->getMessage());
+      $mailWarning = true;
+    }
+
+    workorder_flash($mailWarning ? 'warning' : 'success', $mailWarning ? 'Estimate saved, but the notification email could not be sent.' : 'Estimate saved successfully.');
+    workorder_redirect('workorder_engineering_estimatecost.php');
   }
 }
 
@@ -452,6 +436,11 @@ function pageUrl($p)
           <!-- Filters -->
           <div class="card shadow-sm border-0 mb-3">
             <div class="card-body">
+              <?php if ($flash): ?>
+                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                  <?php echo htmlspecialchars($flash['message']); ?>
+                </div>
+              <?php endif; ?>
 
               <form id="searchForm" method="GET" action="" class="row g-2 align-items-end">
 
@@ -559,6 +548,7 @@ function pageUrl($p)
 
                           <td>
                             <form method="post" class="budget-wrap">
+                              <?php echo workorder_csrf_input(); ?>
                               <input type="hidden" name="request_id" value="<?php echo $rid; ?>">
                               <input
                                 type="number"

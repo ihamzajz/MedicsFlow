@@ -51,7 +51,7 @@ workorder_log_action($requestId, 'ceo', 'rejected', $reason);
 
 try {
     $mail = workorder_create_mailer('ceo');
-    $mail->addAddress((string)($request['email'] ?? ''));
+    workorder_mail_add_address($mail, (string)($request['email'] ?? ''));
     $reasonHtml = nl2br(workorder_h($reason));
     $mail->Subject = 'WorkOrder Request Update';
     $mail->Body = "
@@ -59,7 +59,7 @@ try {
     <p><strong>Reason:</strong> {$reasonHtml}</p>
     ";
     $mail->AltBody = 'Your WorkOrder request has been Rejected by ' . $approverName . '. Reason: ' . $reason;
-    $mail->send();
+    workorder_mail_deliver($mail);
     workorder_flash('success', 'Workorder rejected successfully.');
 } catch (Throwable $e) {
     error_log('Workorder CEO reject mail failed: ' . $e->getMessage());

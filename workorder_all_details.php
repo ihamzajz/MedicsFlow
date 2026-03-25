@@ -183,9 +183,9 @@
                     include 'dbconfig.php';
                     
                     
-                    $id=$_GET['id'];
+                    $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
                     $select = "SELECT * FROM workorder_form WHERE
-                    id = '$id' ";
+                    id = {$id} ";
                     
                     $select_q = mysqli_query($conn,$select);
                     $data = mysqli_num_rows($select_q);
@@ -193,6 +193,9 @@
                 <?php 
                     if($data){
                     	while ($row=mysqli_fetch_array($select_q)) {
+                            $row = array_map(static function ($value) {
+                                return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+                            }, $row);
                     		?>
                 <div class="container" style="background-color:White;border:1px solid black">
                 <a class="btn btn-dark btn-sm mt-1" href="workorder_home.php" style="font-size:11px!important"><i class="fa-solid fa-arrow-left"></i> Home</a>

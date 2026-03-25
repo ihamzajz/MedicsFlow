@@ -79,7 +79,7 @@ if (isset($_POST['submit'])) {
     if ($head_email !== '') {
         try {
             $mail = workorder_create_mailer();
-            $mail->addAddress($head_email, 'HOD');
+            workorder_mail_add_address($mail, $head_email, 'HOD');
             $mail->Subject = 'Workorder Notification';
             $mail->Body = '
                 <p>Dear HOD,</p>
@@ -87,7 +87,7 @@ if (isset($_POST['submit'])) {
                 <p>Kindly review and process the request in <strong>MedicsFlow</strong>.</p>
                 <p>Thank you.</p>
                 <p>Best regards,<br><strong>MedicsFlow</strong></p>';
-            $mail->send();
+            workorder_mail_deliver($mail);
         } catch (Throwable $e) {
             error_log('Workorder mail error: ' . $e->getMessage());
             $mailWarning = true;

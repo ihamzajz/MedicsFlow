@@ -29,6 +29,10 @@
 ### Mail configuration
 - Before: there were two config files, one sample and one local file.
 - After: simplified to one file only, `workorder_mail_config.php`, using your single Gmail account for all workorder emails.
+- Now it also supports:
+- enable/disable all workorder email
+- force all emails to one dummy/test inbox
+- fixed department routing emails from one place
 
 ## Detailed Page-wise Changes
 
@@ -48,10 +52,19 @@
 - Removed repeated SMTP setup from workflow pages.
 - Simplified mail loading to one config file only: `workorder_mail_config.php`.
 - Kept one shared `workorder_create_mailer()` function for all workorder email sending.
+- Added helper support for:
+- global email enable/disable
+- forced test inbox mode
+- fixed route lookups for admin, engineering, and finance
+- shared safe recipient handling
 
 ### `workorder_mail_config.php`
 - Added one simple SMTP config file.
-- Configured it to use your single Gmail account for all workorder mail.
+- Configured it to use the `info@medicslab.com` sender for all workorder mail.
+- Added switches for:
+- turning workorder email on/off
+- forcing all mail to one test email
+- managing fixed routing emails for admin, engineering, and finance
 
 ### `workorder_form.php`
 - Added shared login protection.
@@ -226,10 +239,33 @@
 ## Current Mail Setup
 
 - One account is used for all workorder emails.
-- Host: `smtp.gmail.com`
-- Port: `465`
-- Security: `SMTPS`
-- From email: `hamza.mediclabs@gmail.com`
+- Host: `smtp.office365.com`
+- Port: `587`
+- Security: `STARTTLS`
+- From email: `info@medicslab.com`
+
+## Mail Control Options
+
+- File: `workorder_mail_config.php`
+- `enabled`
+- Use `true` to allow workorder emails
+- Use `false` to stop all workorder emails
+- `force_to_test_inbox`
+- Use `true` to send every workorder email to one dummy inbox only
+- Use `false` to send to real recipients
+- `test_email`
+- Put your dummy/testing inbox address here
+- `routing`
+- Change fixed department emails here if the person in that position changes later
+
+## Recipient Logic
+
+- HOD submission email goes to the requester's current `head_email`
+- User gets notified when head/admin/engineering/finance/ceo approve or reject
+- Department routing mails use fixed config entries for:
+- admin
+- engineering
+- finance
 
 ## Notes
 

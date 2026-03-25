@@ -273,6 +273,26 @@ function workorder_log_action(int $requestId, string $stage, string $action, str
     $stmt->close();
 }
 
+function workorder_latest_action_note(int $requestId, string $stage, string $action = 'rejected'): string
+{
+    workorder_ensure_action_log_table();
+
+    $stmt = workorder_prepare(
+        'SELECT note
+         FROM workorder_action_log
+         WHERE request_id = ? AND action_stage = ? AND action_name = ?
+         ORDER BY id DESC
+         LIMIT 1'
+    );
+    $stmt->bind_param('iss', $requestId, $stage, $action);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result ? $result->fetch_assoc() : null;
+    $stmt->close();
+
+    return trim((string)($row['note'] ?? ''));
+}
+
 function workorder_render_action_forms_js(): string
 {
     return <<<HTML

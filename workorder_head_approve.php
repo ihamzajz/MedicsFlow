@@ -54,7 +54,7 @@ $requestDepartType = strtolower(trim((string)($request['depart_type'] ?? '')));
 
 try {
     $mail = workorder_create_mailer('default');
-    $mail->addAddress($requesterEmail);
+    workorder_mail_add_address($mail, $requesterEmail);
     $mail->Subject = 'Workorder Notification';
     $mail->Body = "
     <p>Dear {$requesterName},</p>
@@ -63,11 +63,12 @@ try {
     <p>Thank you.</p>
     <p>Best regards,<br><strong>MedicsFlow</strong></p>
     ";
-    $mail->send();
+    workorder_mail_deliver($mail);
 
     $mail->clearAddresses();
     if ($requestDepartType === 'engineering') {
-        $mail->addAddress('taha.khan@medicslab.com', 'Engineering Department');
+        $route = workorder_mail_route('engineering_department');
+        workorder_mail_add_address($mail, $route['email'], $route['name']);
         $mail->Body = "
         <p>Dear Engineering Department,</p>
         <p>A new work order request <strong>#{$requestId}</strong> has been submitted by <strong>{$requesterName}</strong> and approved at the initial level.</p>
@@ -75,7 +76,8 @@ try {
         <p>Best regards,<br><strong>MedicsFlow</strong></p>
         ";
     } else {
-        $mail->addAddress('jawwad.ali@medicslab.com', 'Admin Department');
+        $route = workorder_mail_route('admin_department');
+        workorder_mail_add_address($mail, $route['email'], $route['name']);
         $mail->Body = "
         <p>Dear Admin Department,</p>
         <p>A new work order request <strong>#{$requestId}</strong> has been submitted by <strong>{$requesterName}</strong> and approved at the initial level.</p>
@@ -85,7 +87,7 @@ try {
     }
 
     $mail->Subject = 'Workorder Notification';
-    $mail->send();
+    workorder_mail_deliver($mail);
     workorder_flash('success', 'Workorder approved successfully.');
 } catch (Throwable $e) {
     error_log('Workorder head approve mail failed: ' . $e->getMessage());

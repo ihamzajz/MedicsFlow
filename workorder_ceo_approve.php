@@ -44,11 +44,11 @@ workorder_log_action($requestId, 'ceo', 'approved', $ceoMsg);
 
 try {
     $mail = workorder_create_mailer('ceo');
-    $mail->addAddress((string)($request['email'] ?? ''));
+    workorder_mail_add_address($mail, (string)($request['email'] ?? ''));
     $mail->Subject = 'WorkOrder Request Update';
     $mail->Body = 'Your WorkOrder request has been Approved by ' . workorder_h($approverName);
     $mail->AltBody = 'Your WorkOrder request has been Approved by ' . $approverName;
-    $mail->send();
+    workorder_mail_deliver($mail);
     workorder_flash('success', 'Workorder approved successfully.');
 } catch (Throwable $e) {
     error_log('Workorder CEO approve mail failed: ' . $e->getMessage());

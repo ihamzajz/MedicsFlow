@@ -44,6 +44,11 @@ $departType = $row['depart_type'] ?? ''; // kept as-is for display
 
 /* ✅ IMPORTANT: Head section visibility based on DB column be_role */
 $rowBeRole = $row['be_role'] ?? '';
+$headRejectReason = workorder_latest_action_note($id, 'head');
+$engineeringRejectReason = workorder_latest_action_note($id, 'engineering');
+$adminRejectReason = workorder_latest_action_note($id, 'admin');
+$financeRejectReason = workorder_latest_action_note($id, 'finance');
+$ceoRejectReason = workorder_latest_action_note($id, 'ceo');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -257,7 +262,7 @@ body{
                             </div>
                             <div class="kv-row"><div class="k">Engineering Message</div><div class="v"><?php echo htmlspecialchars($row['engineering_msg'] ?? ''); ?></div></div>
                             <div class="kv-row"><div class="k">Engineering Date</div><div class="v"><?php echo htmlspecialchars(fmt_date_ddmmyyyy($row['eng_date'] ?? '')); ?></div></div>
-                            <div class="kv-row"><div class="k">Engineering Reject Reason</div><div class="v"><?php echo htmlspecialchars($row['reason'] ?? ''); ?></div></div>
+                            <div class="kv-row"><div class="k">Engineering Reject Reason</div><div class="v"><?php echo htmlspecialchars($engineeringRejectReason); ?></div></div>
                         </div>
 
                     <?php elseif ($be_depart === 'admin'): ?>
@@ -269,7 +274,7 @@ body{
                             </div>
                             <div class="kv-row"><div class="k">Admin Message</div><div class="v"><?php echo htmlspecialchars($row['admin_msg'] ?? ''); ?></div></div>
                             <div class="kv-row"><div class="k">Admin Date</div><div class="v"><?php echo htmlspecialchars(fmt_date_ddmmyyyy($row['admin_date'] ?? '')); ?></div></div>
-                            <div class="kv-row"><div class="k">Admin Reject Reason</div><div class="v"><?php echo htmlspecialchars($row['reason'] ?? ''); ?></div></div>
+                            <div class="kv-row"><div class="k">Admin Reject Reason</div><div class="v"><?php echo htmlspecialchars($adminRejectReason); ?></div></div>
                         </div>
                     <?php endif; ?>
                 <?php endif; ?>

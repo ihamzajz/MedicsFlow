@@ -1,18 +1,23 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/workorder_bootstrap.php';
 
-include "dbconfig.php";
+workorder_require_login();
+if (!workorder_can_admin_act()) {
+  workorder_abort(403, 'You are not allowed to access admin closeout.');
+}
 
 // ===== Session =====
 $fullname = $_SESSION['fullname'] ?? '';
+$flash = workorder_take_flash();
 
 /* =========================================================
    ✅ DO NOT TOUCH: Admin closeout saving logic (same behavior)
 ========================================================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
+  workorder_require_post_csrf();
 
-  $reqid = (int)($_POST['request_id'] ?? 0);
+  $reqid = workorder_get_request_id_from_post();
   if ($reqid > 0) {
     $btnKey    = 'budget_btn_' . $reqid;
     $budgetKey = 'budget_' . $reqid;
@@ -22,27 +27,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
       date_default_timezone_set("Asia/Karachi");
       $closeout_date = date('Y-m-d H:i:s');
 
-      $closeout = $_POST[$budgetKey] ?? '';
-      $closeout_safe = mysqli_real_escape_string($conn, (string)$closeout);
+      $closeout = trim((string)($_POST[$budgetKey] ?? ''));
+      if ($closeout === '') {
+        workorder_flash('danger', 'Please enter closeout remarks.');
+        workorder_redirect('workorder_admin_closeout.php');
+      }
 
       $fname = $fullname;
-
-      $update = "UPDATE workorder_form SET
-        closeout = '{$closeout_safe} / by {$fname}',
-        closeout_date = '{$closeout_date}',
-        task_status='Task Completed',
-        final_status = 'Completed'
-        WHERE id = '{$reqid}'";
-
-      $update_q = mysqli_query($conn, $update);
-
-      if ($update_q) {
-        echo '<script type="text/javascript">location.reload();</script>';
-        exit;
-      } else {
-        echo '<script type="text/javascript">alert("failed!");location.reload();</script>';
-        exit;
+      $request = workorder_fetch_request($reqid);
+      if (!$request || strcasecmp((string)($request['depart_type'] ?? ''), 'Admin') !== 0 || strcasecmp((string)($request['task_status'] ?? ''), 'Work in progress') !== 0 || trim((string)($request['closeout'] ?? '')) !== '') {
+        workorder_flash('danger', 'This request is no longer available for closeout.');
+        workorder_redirect('workorder_admin_closeout.php');
       }
+
+      $closeoutNote = $closeout . ' / by ' . $fname;
+      $taskCompleted = 'Task Completed';
+      $completed = 'Completed';
+      $workInProgress = 'Work in progress';
+      $emptyCloseout = '';
+
+      $stmt = workorder_prepare(
+        'UPDATE workorder_form
+         SET closeout = ?, closeout_date = ?, task_status = ?, final_status = ?
+         WHERE id = ? AND depart_type = ? AND task_status = ? AND closeout = ?'
+      );
+      $departType = 'Admin';
+      $stmt->bind_param('ssssisss', $closeoutNote, $closeout_date, $taskCompleted, $completed, $reqid, $departType, $workInProgress, $emptyCloseout);
+      $stmt->execute();
+      $updated = $stmt->affected_rows > 0;
+      $stmt->close();
+
+      if ($updated) {
+        workorder_log_action($reqid, 'admin', 'closeout', $closeoutNote);
+        workorder_flash('success', 'Closeout saved successfully.');
+      } else {
+        workorder_flash('danger', 'This request was already updated by someone else.');
+      }
+      workorder_redirect('workorder_admin_closeout.php');
     }
   }
 }
@@ -448,6 +469,11 @@ function pageUrl($p)
           <!-- Table -->
           <div class="card shadow-sm border-0">
             <div class="card-body">
+              <?php if ($flash): ?>
+                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                  <?php echo htmlspecialchars($flash['message']); ?>
+                </div>
+              <?php endif; ?>
 
               <div class="table-responsive dt-wrap">
                 <table class="table table-hover align-middle mb-0" id="myTable">
@@ -491,6 +517,7 @@ function pageUrl($p)
 
                           <td>
                             <form method="post" class="closeout-wrap" style="margin:0;">
+                              <?php echo workorder_csrf_input(); ?>
                               <input type="hidden" name="request_id" value="<?php echo $rid; ?>">
                               <input
                                 type="text"

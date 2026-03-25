@@ -61,7 +61,7 @@ $reasonHtml = nl2br(workorder_h($reason));
 
 try {
     $mail = workorder_create_mailer('default');
-    $mail->addAddress($requesterEmail);
+    workorder_mail_add_address($mail, $requesterEmail);
     $mail->Subject = 'Workorder Notification';
     $mail->Body = "
     <p>Dear {$requesterName},</p>
@@ -71,7 +71,7 @@ try {
     <p>Thank you for your understanding.</p>
     <p>Best regards,<br><strong>MedicsFlow</strong></p>
     ";
-    $mail->send();
+    workorder_mail_deliver($mail);
     workorder_flash('success', 'Workorder rejected successfully.');
 } catch (Throwable $e) {
     error_log('Workorder head reject mail failed: ' . $e->getMessage());

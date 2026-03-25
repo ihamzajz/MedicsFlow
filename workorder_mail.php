@@ -44,3 +44,62 @@ function workorder_create_mailer(string $profile = 'default'): PHPMailer
 
     return $mail;
 }
+
+function workorder_mail_is_enabled(): bool
+{
+    $settings = workorder_mail_settings();
+    return !empty($settings['enabled']);
+}
+
+function workorder_mail_test_recipient(): ?array
+{
+    $settings = workorder_mail_settings();
+    if (empty($settings['force_to_test_inbox']) || empty($settings['test_email'])) {
+        return null;
+    }
+
+    return [
+        'email' => (string)$settings['test_email'],
+        'name' => (string)($settings['test_name'] ?? 'Workorder Test Inbox'),
+    ];
+}
+
+function workorder_mail_add_address(PHPMailer $mail, string $email, string $name = ''): void
+{
+    $testRecipient = workorder_mail_test_recipient();
+    if ($testRecipient) {
+        $mail->clearAddresses();
+        $mail->addAddress($testRecipient['email'], $testRecipient['name']);
+        return;
+    }
+
+    if ($email === '') {
+        throw new RuntimeException('Missing recipient email address.');
+    }
+
+    $mail->addAddress($email, $name);
+}
+
+function workorder_mail_deliver(PHPMailer $mail): bool
+{
+    if (!workorder_mail_is_enabled()) {
+        return false;
+    }
+
+    return $mail->send();
+}
+
+function workorder_mail_route(string $key): array
+{
+    $settings = workorder_mail_settings();
+    $route = $settings['routing'][$key] ?? null;
+
+    if (!is_array($route) || empty($route['email'])) {
+        throw new RuntimeException('Missing mail route configuration for ' . $key . '.');
+    }
+
+    return [
+        'email' => (string)$route['email'],
+        'name' => (string)($route['name'] ?? ''),
+    ];
+}

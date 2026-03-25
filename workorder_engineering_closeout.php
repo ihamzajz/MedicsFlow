@@ -1,8 +1,11 @@
 <?php
 ob_start();
-session_start();
+require_once __DIR__ . '/workorder_bootstrap.php';
 
-include "dbconfig.php";
+workorder_require_login();
+if (!workorder_can_engineering_act(true)) {
+    workorder_abort(403, 'You are not allowed to access engineering closeout.');
+}
 
 // ===== Session =====
 $id         = $_SESSION['id'] ?? '';
@@ -14,13 +17,15 @@ $gender     = $_SESSION['gender'] ?? '';
 $department = $_SESSION['department'] ?? '';
 $role       = $_SESSION['role'] ?? '';
 $added_date = $_SESSION['added_date'] ?? '';
+$flash = workorder_take_flash();
 
 /* =========================================================
    ✅ DO NOT TOUCH: Remarks saving logic (kept same behavior)
 ========================================================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
+    workorder_require_post_csrf();
 
-    $reqid = (int)($_POST['request_id'] ?? 0);
+    $reqid = workorder_get_request_id_from_post();
     if ($reqid > 0) {
         $btnKey    = 'budget_btn_' . $reqid;
         $budgetKey = 'budget_' . $reqid;
@@ -30,27 +35,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
             date_default_timezone_set("Asia/Karachi");
             $closeout_date = date('Y-m-d H:i:s');
 
-            $closeout = $_POST[$budgetKey] ?? '';
-            $closeout_safe = mysqli_real_escape_string($conn, (string)$closeout);
+            $closeout = trim((string)($_POST[$budgetKey] ?? ''));
+            if ($closeout === '') {
+                workorder_flash('danger', 'Please enter closeout remarks.');
+                workorder_redirect('workorder_engineering_closeout.php');
+            }
 
             $fname = $fullname;
-
-            $update = "UPDATE workorder_form SET
-                closeout = '{$closeout_safe} / by {$fname}',
-                closeout_date = '{$closeout_date}',
-                task_status='Task Completed',
-                final_status = 'Completed'
-                WHERE id = '{$reqid}'";
-
-            $update_q = mysqli_query($conn, $update);
-
-            if ($update_q) {
-                echo '<script type="text/javascript">location.reload();</script>';
-                exit;
-            } else {
-                echo '<script type="text/javascript">alert("failed!");location.reload();</script>';
-                exit;
+            $request = workorder_fetch_request($reqid);
+            if (!$request || strcasecmp((string)($request['depart_type'] ?? ''), 'Engineering') !== 0 || strcasecmp((string)($request['task_status'] ?? ''), 'Work in progress') !== 0 || trim((string)($request['closeout'] ?? '')) !== '') {
+                workorder_flash('danger', 'This request is no longer available for closeout.');
+                workorder_redirect('workorder_engineering_closeout.php');
             }
+
+            $closeoutNote = $closeout . ' / by ' . $fname;
+            $taskCompleted = 'Task Completed';
+            $completed = 'Completed';
+            $workInProgress = 'Work in progress';
+            $emptyCloseout = '';
+            $departType = 'Engineering';
+
+            $stmt = workorder_prepare(
+                'UPDATE workorder_form
+                 SET closeout = ?, closeout_date = ?, task_status = ?, final_status = ?
+                 WHERE id = ? AND depart_type = ? AND task_status = ? AND closeout = ?'
+            );
+            $stmt->bind_param('ssssisss', $closeoutNote, $closeout_date, $taskCompleted, $completed, $reqid, $departType, $workInProgress, $emptyCloseout);
+            $stmt->execute();
+            $updated = $stmt->affected_rows > 0;
+            $stmt->close();
+
+            if ($updated) {
+                workorder_log_action($reqid, 'engineering', 'closeout', $closeoutNote);
+                workorder_flash('success', 'Closeout saved successfully.');
+            } else {
+                workorder_flash('danger', 'This request was already updated by someone else.');
+            }
+            workorder_redirect('workorder_engineering_closeout.php');
         }
     }
 }
@@ -390,6 +411,11 @@ function pageUrl($p)
                     <!-- Filters -->
                     <div class="card shadow-sm border-0 mb-3">
                         <div class="card-body">
+                            <?php if ($flash): ?>
+                                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                                    <?php echo htmlspecialchars($flash['message']); ?>
+                                </div>
+                            <?php endif; ?>
                             <form id="searchForm" method="GET" action="" class="row g-2 align-items-end">
 
                                 <div class="col-12 col-lg-3">
@@ -488,6 +514,7 @@ function pageUrl($p)
 
                                                     <td>
                                                         <form method="post" class="closeout-wrap" style="margin:0;">
+                                                            <?php echo workorder_csrf_input(); ?>
                                                             <input type="hidden" name="request_id" value="<?php echo $rid; ?>">
                                                             <input
                                                                 type="text"

@@ -57,7 +57,7 @@ workorder_log_action($requestId, 'finance', 'rejected', $reason);
 
 try {
     $mail = workorder_create_mailer('default');
-    $mail->addAddress((string)($request['email'] ?? ''));
+    workorder_mail_add_address($mail, (string)($request['email'] ?? ''));
     $reasonHtml = nl2br(workorder_h($reason));
     $mail->Subject = 'Workorder Notification';
     $mail->Body = "
@@ -67,7 +67,7 @@ try {
     <p>Thank you.</p>
     <p>Best regards,<br><strong>MedicsFlow</strong></p>
     ";
-    $mail->send();
+    workorder_mail_deliver($mail);
     workorder_flash('success', 'Workorder rejected successfully.');
 } catch (Throwable $e) {
     error_log('Workorder finance reject mail failed: ' . $e->getMessage());
