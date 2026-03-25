@@ -1,10 +1,6 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php'); // Redirect to the login page
-    exit;
-}
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 ?>
 <!DOCTYPE html>
 <html>
@@ -182,9 +178,7 @@ if (!isset($_SESSION['loggedin'])) {
 <body>
 
 
-<?php
-include 'dbconfig.php';
-?>
+<?php ?>
 
 	<div class="wrapper d-flex align-items-stretch">
 			<?php
@@ -228,8 +222,6 @@ include 'dbconfig.php';
              <button id="excel" class="btn btn-success btn-sm dataExport" data-type="excel">Excel</button>
              <input id="filter" type="text" class="form-control w-25" placeholder="Search here..." style="height:27px;display:inline;font-size:11px!important;color:black!important">
 				<?php
-
-				include 'dbconfig.php';
 				$select = "SELECT * FROM workorder_form ORDER BY date DESC";
 				$select_q = mysqli_query($conn,$select);
 				$data = mysqli_num_rows($select_q);

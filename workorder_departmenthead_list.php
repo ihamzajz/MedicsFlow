@@ -1,13 +1,7 @@
 <?php
 ob_start();
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-  header('Location: login.php');
-  exit;
-}
-
-include "dbconfig.php";
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 
 // ===== Session =====
 $be_depart = $_SESSION['be_depart'] ?? '';

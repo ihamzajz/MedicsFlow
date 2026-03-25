@@ -80,13 +80,37 @@ function workorder_mail_add_address(PHPMailer $mail, string $email, string $name
     $mail->addAddress($email, $name);
 }
 
+function workorder_mail_recipient_string(PHPMailer $mail): string
+{
+    $addresses = $mail->getToAddresses();
+    $parts = [];
+
+    foreach ($addresses as $address) {
+        $parts[] = trim((string)($address[0] ?? ''));
+    }
+
+    return implode(', ', array_filter($parts));
+}
+
 function workorder_mail_deliver(PHPMailer $mail): bool
 {
+    $requestId = isset($_POST['request_id']) ? (int)($_POST['request_id'] ?? 0) : null;
+    $mailTo = workorder_mail_recipient_string($mail);
+    $subject = (string)($mail->Subject ?? '');
+
     if (!workorder_mail_is_enabled()) {
+        workorder_log_mail($requestId ?: null, $mailTo, $subject, 'skipped', 'Email sending disabled from config.');
         return false;
     }
 
-    return $mail->send();
+    try {
+        $sent = $mail->send();
+        workorder_log_mail($requestId ?: null, $mailTo, $subject, $sent ? 'sent' : 'failed', $sent ? 'Email sent successfully.' : 'Mailer returned false.');
+        return $sent;
+    } catch (Throwable $e) {
+        workorder_log_mail($requestId ?: null, $mailTo, $subject, 'failed', $e->getMessage());
+        throw $e;
+    }
 }
 
 function workorder_mail_route(string $key): array

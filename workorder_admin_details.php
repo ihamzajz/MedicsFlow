@@ -1,11 +1,7 @@
 <?php
-    session_start();
-    
-    if (!isset($_SESSION['loggedin'])) {
-        header('Location: login.php'); // Redirect to the login page
-        exit;
-    }
-    ?>
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -155,9 +151,7 @@
     <?php include 'workorder_nav_theme.php'; ?>
 </head>
     <body>
-        <?php
-            include 'dbconfig.php';
-            ?>
+        <?php ?>
         <div class="wrapper d-flex align-items-stretch">
             <?php
                 include 'sidebar1.php';
@@ -174,19 +168,14 @@
                     </div>
                 </nav>
                 <?php
-                    include 'dbconfig.php';
-                    
-                    
                     $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-                    $select = "SELECT * FROM workorder_form WHERE
-                    id = {$id} ";
-                    
-                    $select_q = mysqli_query($conn,$select);
-                    $data = mysqli_num_rows($select_q);
-                    ?>
+                    $row = $id > 0 ? workorder_fetch_request($id) : null;
+                    $data = $row ? 1 : 0;
+                    $engineeringRejectReason = $id > 0 ? workorder_latest_action_note($id, 'engineering') : '';
+                    $adminRejectReason = $id > 0 ? workorder_latest_action_note($id, 'admin') : '';
+                ?>
                 <?php 
                     if($data){
-                    	while ($row=mysqli_fetch_array($select_q)) {
                             $row = array_map(static function ($value) {
                                 return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
                             }, $row);
@@ -269,7 +258,7 @@
                         </div>
                         <div class="col-md-3">
                         <p>Engineering Reject Reason:</p>
-                          <input type="text" placeholder="<?php echo $row['reason']?>" readonly class="w-100">
+                          <input type="text" placeholder="<?php echo htmlspecialchars($engineeringRejectReason, ENT_QUOTES, 'UTF-8')?>" readonly class="w-100">
                         </div>
                     </div>
                     <div class="row pb-2">
@@ -287,7 +276,7 @@
                         </div>
                         <div class="col-md-3">
                         <p>Admin Reject Reason:</p>
-                          <input type="text" placeholder="<?php echo $row['reason']?>" readonly class="w-100">
+                          <input type="text" placeholder="<?php echo htmlspecialchars($adminRejectReason, ENT_QUOTES, 'UTF-8')?>" readonly class="w-100">
                         </div>
                     </div>
                     <div class="row pb-1">       
@@ -321,7 +310,6 @@
                 
                 
                 <?php
-                    }
                     }
                     else{
                     echo "No record found!";

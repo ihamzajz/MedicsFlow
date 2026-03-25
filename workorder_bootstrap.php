@@ -254,6 +254,29 @@ function workorder_ensure_action_log_table(): void
     $ready = true;
 }
 
+function workorder_ensure_mail_log_table(): void
+{
+    static $ready = false;
+    if ($ready) {
+        return;
+    }
+
+    $sql = "CREATE TABLE IF NOT EXISTS workorder_mail_log (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        request_id INT DEFAULT NULL,
+        mail_to TEXT NULL,
+        subject VARCHAR(255) DEFAULT '',
+        delivery_status VARCHAR(50) NOT NULL,
+        note TEXT NULL,
+        created_at DATETIME NOT NULL,
+        INDEX idx_workorder_mail_log_request (request_id),
+        INDEX idx_workorder_mail_log_status (delivery_status)
+    )";
+
+    workorder_db()->query($sql);
+    $ready = true;
+}
+
 function workorder_log_action(int $requestId, string $stage, string $action, string $note = ''): void
 {
     workorder_ensure_action_log_table();
@@ -291,6 +314,20 @@ function workorder_latest_action_note(int $requestId, string $stage, string $act
     $stmt->close();
 
     return trim((string)($row['note'] ?? ''));
+}
+
+function workorder_log_mail(?int $requestId, string $mailTo, string $subject, string $deliveryStatus, string $note = ''): void
+{
+    workorder_ensure_mail_log_table();
+
+    $createdAt = workorder_now();
+    $stmt = workorder_prepare(
+        'INSERT INTO workorder_mail_log (request_id, mail_to, subject, delivery_status, note, created_at)
+         VALUES (?, ?, ?, ?, ?, ?)'
+    );
+    $stmt->bind_param('isssss', $requestId, $mailTo, $subject, $deliveryStatus, $note, $createdAt);
+    $stmt->execute();
+    $stmt->close();
 }
 
 function workorder_render_action_forms_js(): string
