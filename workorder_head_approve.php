@@ -26,8 +26,8 @@ if (!workorder_request_is_head_pending($request)) {
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $headMsg = 'Approved By ' . $approverName;
-$taskStatus = 'Task is going through approval';
-$finalStatus = 'Approval Pending';
+$taskStatus = workorder_task_status_approval_pending();
+$finalStatus = workorder_final_status_approval_pending();
 $pending = 'Pending';
 $approved = 'Approved';
 

@@ -33,7 +33,7 @@ if (!workorder_request_is_ceo_pending($request)) {
 $approverName = (string)workorder_session('fullname');
 $rejected = 'Rejected';
 $ceoMsg = 'Rejected By ' . $approverName;
-$taskStatus = 'Rejected By ' . $approverName;
+$taskStatus = workorder_task_status_rejected_by($approverName);
 
 $stmt = workorder_prepare('UPDATE workorder_form SET ceo_status = ?, ceo_msg = ?, task_status = ?, reason = ? WHERE id = ? AND ceo_status = ?');
 $pending = 'Pending';

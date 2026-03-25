@@ -26,8 +26,8 @@ if (!workorder_request_is_finance_pending($request)) {
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $financeMsg = 'Approved By ' . $approverName;
-$taskStatus = 'Work in progress';
-$finalStatus = 'Work In Progress';
+$taskStatus = workorder_task_status_work_in_progress();
+$finalStatus = workorder_final_status_work_in_progress();
 $pending = 'Pending';
 $approved = 'Approved';
 

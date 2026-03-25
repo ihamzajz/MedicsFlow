@@ -33,7 +33,7 @@ if (strcasecmp((string)($request['depart_type'] ?? ''), 'Admin') !== 0 || !worko
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $adminMsg = 'Rejected By ' . $approverName;
-$taskStatus = 'Rejected By ' . $approverName;
+$taskStatus = workorder_task_status_rejected_by($approverName);
 $finalStatus = 'Rejected';
 $pending = 'Pending';
 $rejected = 'Rejected';

@@ -26,8 +26,8 @@ if (strcasecmp((string)($request['depart_type'] ?? ''), 'Engineering') !== 0 || 
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $engineeringMsg = 'Approved By ' . $approverName;
-$taskStatus = 'Work in progress';
-$finalStatus = 'Work In Progress';
+$taskStatus = workorder_task_status_work_in_progress();
+$finalStatus = workorder_final_status_work_in_progress();
 $approved = 'Approved';
 $pending = 'Pending';
 

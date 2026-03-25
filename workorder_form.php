@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
 
     $pending = 'Pending';
     $amount = 'TBD';
-    $taskStatus = 'Task is going through approval';
+    $taskStatus = workorder_task_status_approval_pending();
 
     $stmt->bind_param(
         'sssssssssssssssssss',

@@ -33,7 +33,7 @@ if (strcasecmp((string)($request['depart_type'] ?? ''), 'Engineering') !== 0 || 
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $engineeringMsg = 'Rejected By ' . $approverName;
-$taskStatus = 'Rejected By ' . $approverName;
+$taskStatus = workorder_task_status_rejected_by($approverName);
 $finalStatus = 'Rejected';
 $pending = 'Pending';
 $rejected = 'Rejected';

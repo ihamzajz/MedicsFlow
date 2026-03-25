@@ -25,8 +25,8 @@ if (strcasecmp((string)($request['depart_type'] ?? ''), 'Admin') !== 0 || !worko
 
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
-$taskStatus = 'Work in progress';
-$finalStatus = 'Work In Progress';
+$taskStatus = workorder_task_status_work_in_progress();
+$finalStatus = workorder_final_status_work_in_progress();
 $adminMsg = 'Approved By ' . $approverName;
 
 $stmt = workorder_prepare(

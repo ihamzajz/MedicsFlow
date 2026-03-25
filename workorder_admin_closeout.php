@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'])) {
       }
 
       $closeoutNote = $closeout . ' / by ' . $fname;
-      $taskCompleted = 'Task Completed';
-      $completed = 'Completed';
-      $workInProgress = 'Work in progress';
+      $taskCompleted = workorder_task_status_completed();
+      $completed = workorder_final_status_completed();
+      $workInProgress = workorder_task_status_work_in_progress();
       $emptyCloseout = '';
 
       $stmt = workorder_prepare(
@@ -84,7 +84,7 @@ $dateError = '';
 $whereParts = [];
 $whereParts[] = "(
   depart_type = 'Admin' AND
-  task_status = 'Work in progress' AND
+  task_status = 'Work In Progress' AND
   closeout = ''
 )";
 
@@ -430,7 +430,7 @@ function pageUrl($p)
                 </div>
 
                 <div class="col-6 col-lg-1 d-grid">
-                  <button id="searchBtn" type="submit" class="btn btn-primary btn-sm">
+                  <button id="searchBtn" type="button" class="btn btn-primary btn-sm">
                     <i class="fa-solid fa-magnifying-glass me-1"></i> Search
                   </button>
                 </div>
@@ -620,6 +620,7 @@ function pageUrl($p)
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("searchForm");
+        const searchBtn = document.getElementById("searchBtn");
         const q = document.getElementById("q");
         const dateFrom = document.getElementById("dateFrom");
         const dateTo = document.getElementById("dateTo");
@@ -650,8 +651,7 @@ function pageUrl($p)
         dateFrom.addEventListener("change", validateDates);
         dateTo.addEventListener("change", validateDates);
 
-        form.addEventListener("submit", function(e) {
-          e.preventDefault();
+        function applyFilters() {
           if (!validateDates()) return;
 
           const url = new URL(window.location.href);
@@ -670,7 +670,13 @@ function pageUrl($p)
 
           url.searchParams.set("page", "1");
           window.location.href = url.toString();
+        }
+
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
         });
+
+        searchBtn.addEventListener("click", applyFilters);
 
         resetBtn.addEventListener("click", function() {
           const url = new URL(window.location.href);

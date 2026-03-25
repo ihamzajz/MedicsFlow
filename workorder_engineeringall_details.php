@@ -180,19 +180,19 @@ workorder_require_login();
                             <!-- row 1 start-->
                             <div class="col-md-3">
                                 <p>Name:</p>
-                                <input type="text" placeholder="<?php echo $row['name'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['name'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Department:</p>
-                                <input type="text" placeholder="<?php echo $row['department'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['department'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Role:</p>
-                                <input type="text" placeholder="<?php echo $row['role'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['role'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Submission Date:</p>
-                                <input type="text" placeholder="<?php echo $row['date'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['date'] ?>" readonly>
                             </div>
                         </div>
                         <hr>
@@ -202,83 +202,83 @@ workorder_require_login();
                         <div class="row pb-1">
                             <div class="col-md-3">
                                 <p>Type:</p>
-                                <input type="text" placeholder="<?php echo $row['type'] ?>" readonly class="mb-2">
+                                <input type="text" value="<?php echo $row['type'] ?>" readonly class="mb-2">
                                 <p>Category:</p>
-                                <input type="text" placeholder="<?php echo $row['category'] ?>" readonly class="mb-2">
+                                <input type="text" value="<?php echo $row['category'] ?>" readonly class="mb-2">
                                 <p>Amount:</p>
-                                <input type="text" placeholder="<?php echo $row['amount'] ?>" readonly class="mb-2">
+                                <input type="text" value="<?php echo $row['amount'] ?>" readonly class="mb-2">
                             </div>
                             <div class="col-md-6">
                                 <p>Discription:</p>
-                                <textarea placeholder="<?php echo $row['description'] ?>" readonly rows="50" cols="50" style="height:100px!important"></textarea>
+                                <textarea readonly rows="50" cols="50" style="height:100px!important"><?php echo $row['description'] ?></textarea>
                             </div>
                         </div>
 
                         <div class="row pb-2">
                             <div class="col-md-3">
                                 <p>Head Status:</p>
-                                <input type="text" placeholder="<?php echo $row['head_status'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['head_status'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Head Message:</p>
-                                <input type="text" placeholder="<?php echo $row['head_msg'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['head_msg'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Head Date:</p>
-                                <input type="text" placeholder="<?php echo $row['head_date'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['head_date'] ?>" readonly>
                             </div>
                         </div>
 
                         <div class="row pb-2">
                             <div class="col-md-3">
                                 <p>Engineering Status:</p>
-                                <input type="text" placeholder="<?php echo $row['engineering_status'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['engineering_status'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Engineering Message:</p>
-                                <input type="text" placeholder="<?php echo $row['engineering_msg'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['engineering_msg'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Engineering Date:</p>
-                                <input type="text" placeholder="<?php echo $row['eng_date'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['eng_date'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Engineering Reject Reason:</p>
-                                <input type="text" placeholder="<?php echo htmlspecialchars($engineeringRejectReason, ENT_QUOTES, 'UTF-8') ?>" readonly>
+                                <input type="text" value="<?php echo htmlspecialchars($engineeringRejectReason, ENT_QUOTES, 'UTF-8') ?>" readonly>
                             </div>
                         </div>
 
                         <div class="row pb-2">
                             <div class="col-md-3">
                                 <p>Admin Status:</p>
-                                <input type="text" placeholder="<?php echo $row['admin_status'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['admin_status'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Admin Message:</p>
-                                <input type="text" placeholder="<?php echo $row['admin_msg'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['admin_msg'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Admin Date:</p>
-                                <input type="text" placeholder="<?php echo $row['admin_date'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['admin_date'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Admin Reject Reason:</p>
-                                <input type="text" placeholder="<?php echo htmlspecialchars($adminRejectReason, ENT_QUOTES, 'UTF-8') ?>" readonly>
+                                <input type="text" value="<?php echo htmlspecialchars($adminRejectReason, ENT_QUOTES, 'UTF-8') ?>" readonly>
                             </div>
                         </div>
 
                         <div class="row pb-1">
                             <div class="col-md-3">
                                 <p>Finance Status:</p>
-                                <input type="text" placeholder="<?php echo $row['finance_status'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['finance_status'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Finance Message:</p>
-                                <input type="text" placeholder="<?php echo $row['finance_msg'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['finance_msg'] ?>" readonly>
                             </div>
                             <div class="col-md-3">
                                 <p>Finance Date:</p>
-                                <input type="text" placeholder="<?php echo $row['fc_date'] ?>" readonly>
+                                <input type="text" value="<?php echo $row['fc_date'] ?>" readonly>
                             </div>
                         </div>
 
@@ -286,13 +286,13 @@ workorder_require_login();
                         <div class="row pb-4">
                             <div class="col-md-6">
                                 <p>Closeout Date:</p>
-                                <input type="text" placeholder="<?php echo $row['closeout_date'] ?>" readonly class="mb-1">
+                                <input type="text" value="<?php echo $row['closeout_date'] ?>" readonly class="mb-1">
                                 <p>Closeout Remarks:</p>
-                                <textarea placeholder="<?php echo $row['closeout'] ?>" readonly rows=3 cols="50" style="height:100px!important"></textarea>
+                                <textarea readonly rows=3 cols="50" style="height:100px!important"><?php echo $row['closeout'] ?></textarea>
                             </div>
                             <div class="col-md-4">
                                 <p>Task Status:</p>
-                                <textarea placeholder="<?php echo $row['task_status'] ?>" readonly rows=2 cols="40"></textarea>
+                                <textarea readonly rows=2 cols="40"><?php echo $row['task_status'] ?></textarea>
                             </div>
                         </div>
                     </div>

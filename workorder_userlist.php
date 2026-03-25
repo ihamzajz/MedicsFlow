@@ -280,7 +280,7 @@ function pageUrl($p)
 
                 <!-- ✅ Smaller buttons -->
                 <div class="col-6 col-lg-1 d-grid">
-                  <button id="searchBtn" type="submit" class="btn btn-primary btn-sm">
+                  <button id="searchBtn" type="button" class="btn btn-primary btn-sm">
                     <i class="fa-solid fa-magnifying-glass me-1"></i> Search
                   </button>
                 </div>
@@ -422,6 +422,7 @@ function pageUrl($p)
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("searchForm");
+        const searchBtn = document.getElementById("searchBtn");
         const q = document.getElementById("q");
         const dateFrom = document.getElementById("dateFrom");
         const dateTo = document.getElementById("dateTo");
@@ -452,8 +453,7 @@ function pageUrl($p)
         dateFrom.addEventListener("change", validateDates);
         dateTo.addEventListener("change", validateDates);
 
-        form.addEventListener("submit", function(e) {
-          e.preventDefault();
+        function applyFilters() {
           if (!validateDates()) return;
 
           const url = new URL(window.location.href);
@@ -472,7 +472,13 @@ function pageUrl($p)
 
           url.searchParams.set("page", "1");
           window.location.href = url.toString();
+        }
+
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
         });
+
+        searchBtn.addEventListener("click", applyFilters);
 
         resetBtn.addEventListener("click", function() {
           const url = new URL(window.location.href);

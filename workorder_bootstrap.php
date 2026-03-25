@@ -27,6 +27,41 @@ function workorder_now(): string
     return date('Y-m-d H:i:s');
 }
 
+function workorder_task_status_approval_pending(): string
+{
+    return 'Approval Pending';
+}
+
+function workorder_final_status_approval_pending(): string
+{
+    return 'Approval Pending';
+}
+
+function workorder_task_status_work_in_progress(): string
+{
+    return 'Work In Progress';
+}
+
+function workorder_final_status_work_in_progress(): string
+{
+    return 'Work In Progress';
+}
+
+function workorder_task_status_completed(): string
+{
+    return 'Task Completed';
+}
+
+function workorder_final_status_completed(): string
+{
+    return 'Completed';
+}
+
+function workorder_task_status_rejected_by(string $actorName): string
+{
+    return 'Rejected By ' . trim($actorName);
+}
+
 function workorder_db(): mysqli
 {
     global $conn;

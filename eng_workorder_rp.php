@@ -1,13 +1,7 @@
 <?php
 ob_start();
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-  header('Location: login.php');
-  exit;
-}
-
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 
 // ===== Session =====
 $id         = $_SESSION['id'] ?? '';
@@ -187,7 +181,6 @@ $anyFilterOn = !(
       font-size: 11px;
       border: none !important;
       font-weight: 400;
-      vertical-align: top;
     }
 
     tr {
@@ -196,7 +189,7 @@ $anyFilterOn = !(
 
     .td-wrap {
       max-width: 520px;
-      white-space: normal !important;
+      white-space: normal;
       word-break: break-word;
       overflow-wrap: anywhere;
     }
@@ -290,81 +283,8 @@ $anyFilterOn = !(
       font-weight: 500;
     }
 
-    /* =========================================================
-       ✅ DataTable-like panel:
-       - Height 90vh
-       - Horizontal + Vertical scroll inside
-       - Wide table (no weird squeezing)
-       - Sticky header
-    ========================================================= */
-    .table-responsive.dt-wrap {
-      max-height: 90vh;
-      overflow: auto;
-      border-radius: 14px;
-      border: 1px solid #d8dee6;
-      background: #fff;
-    }
-
-    .table-responsive.dt-wrap table {
-      width: max-content;
-      min-width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    .table-responsive.dt-wrap thead th {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .table-responsive.dt-wrap th,
-    .table-responsive.dt-wrap td {
-      padding: 12px 12px !important;
-      vertical-align: top !important;
-    }
-
-    /* Default: keep most columns single line */
-    .table-responsive.dt-wrap td {
-      white-space: nowrap;
-    }
-
-    /* Wrap only where needed */
-    .table-responsive.dt-wrap td.td-wrap {
-      white-space: normal !important;
-      max-width: 520px;
-      word-break: break-word;
-      overflow-wrap: anywhere;
-    }
-
-    /* Hover + zebra */
-    .table-responsive.dt-wrap tbody tr:hover td {
-      background: #f8fbff;
-    }
-
-    .table-responsive.dt-wrap tbody tr:nth-child(even) td {
-      background: #fbfdff;
-    }
-
-    .table-responsive.dt-wrap tbody td {
-      border-bottom: 1px solid #e5e7eb !important;
-    }
-
-    /* Optional nice scrollbars */
-    .table-responsive.dt-wrap::-webkit-scrollbar {
-      height: 10px;
-      width: 10px;
-    }
-
-    .table-responsive.dt-wrap::-webkit-scrollbar-thumb {
-      background: #c7ced8;
-      border-radius: 999px;
-    }
-
-    .table-responsive.dt-wrap::-webkit-scrollbar-track {
-      background: #eef2f7;
-    }
   </style>
+  <?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -405,7 +325,7 @@ $anyFilterOn = !(
                 <div class="col-12 col-lg-3">
                   <label class="form-label fw-bold small">Search</label>
                   <input class="form-control form-control-sm" id="q" name="q" type="text"
-                    placeholder="Type and press Apply..."
+                    placeholder="Type and press Search..."
                     value="<?php echo htmlspecialchars($qRaw); ?>">
                 </div>
 
@@ -457,8 +377,8 @@ $anyFilterOn = !(
                 </div>
 
                 <div class="col-6 col-lg-1 d-grid">
-                  <button type="submit" class="btn btn-primary btn-sm">
-                    <i class="fa-solid fa-filter me-1"></i> Apply
+                  <button id="searchBtn" type="button" class="btn btn-primary btn-sm">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Search
                   </button>
                 </div>
 
@@ -472,7 +392,7 @@ $anyFilterOn = !(
                   </button>
                 </div>
 
-                <div class="col-12 col-lg-2 d-flex">
+                <div class="col-12 col-lg d-flex justify-content-lg-end align-items-end">
                   <div class="mint-badge">
                     <i class="fa-solid fa-database"></i>
                     Total: <?php echo (int)$totalRows; ?>
@@ -643,10 +563,10 @@ $anyFilterOn = !(
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("filterForm");
+        const searchBtn = document.getElementById("searchBtn");
         const resetBtn = document.getElementById("resetBtn");
 
-        // Force page=1 on Apply
-        form.addEventListener("submit", function() {
+        function applyFilters() {
           const existing = form.querySelector('input[name="page"]');
           if (existing) existing.remove();
 
@@ -655,7 +575,14 @@ $anyFilterOn = !(
           pageInput.name = "page";
           pageInput.value = "1";
           form.appendChild(pageInput);
+          form.submit();
+        }
+
+        form.addEventListener("submit", function(e) {
+          e.preventDefault();
         });
+
+        searchBtn.addEventListener("click", applyFilters);
 
         // Reset all filters
         resetBtn?.addEventListener("click", function() {

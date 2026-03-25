@@ -33,7 +33,7 @@ if (!workorder_request_is_head_pending($request)) {
 $approverName = (string)workorder_session('fullname');
 $now = workorder_now();
 $headMsg = 'Rejected By ' . $approverName;
-$taskStatus = 'Rejected By ' . $approverName;
+$taskStatus = workorder_task_status_rejected_by($approverName);
 $finalStatus = 'Rejected';
 $pending = 'Pending';
 $rejected = 'Rejected';
