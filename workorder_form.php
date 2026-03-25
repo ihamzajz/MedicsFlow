@@ -12,19 +12,19 @@ $flash = workorder_take_flash();
 if (isset($_POST['submit'])) {
     workorder_require_post_csrf();
 
-    $name        = (string)($_SESSION['fullname'] ?? '');
-    $email       = (string)($_SESSION['email'] ?? '');
-    $username    = (string)($_SESSION['username'] ?? '');
-    $department  = (string)($_SESSION['department'] ?? '');
-    $role        = (string)($_SESSION['role'] ?? '');
-    $date        = workorder_now();
-    $desc        = trim((string)($_POST['desc'] ?? ''));
-    $head_email  = (string)($_SESSION['head_email'] ?? '');
-    $be_depart   = (string)($_SESSION['be_depart'] ?? '');
-    $be_role     = (string)($_SESSION['be_role'] ?? '');
-    $type        = trim((string)($_POST['type'] ?? ''));
-    $category    = trim((string)($_POST['category'] ?? ''));
-    $depart_type = trim((string)($_POST['depart_type'] ?? ''));
+    $name = (string) ($_SESSION['fullname'] ?? '');
+    $email = (string) ($_SESSION['email'] ?? '');
+    $username = (string) ($_SESSION['username'] ?? '');
+    $department = (string) ($_SESSION['department'] ?? '');
+    $role = (string) ($_SESSION['role'] ?? '');
+    $date = workorder_now();
+    $desc = trim((string) ($_POST['desc'] ?? ''));
+    $head_email = (string) ($_SESSION['head_email'] ?? '');
+    $be_depart = (string) ($_SESSION['be_depart'] ?? '');
+    $be_role = (string) ($_SESSION['be_role'] ?? '');
+    $type = trim((string) ($_POST['type'] ?? ''));
+    $category = trim((string) ($_POST['category'] ?? ''));
+    $depart_type = trim((string) ($_POST['depart_type'] ?? ''));
 
     if ($type === '' || $category === '' || $depart_type === '' || $desc === '') {
         workorder_flash('danger', 'Please complete all required fields before submitting.');
@@ -71,9 +71,9 @@ if (isset($_POST['submit'])) {
         workorder_redirect('workorder_form.php');
     }
 
-    $requestId = (int)workorder_db()->insert_id;
+    $requestId = (int) workorder_db()->insert_id;
     $stmt->close();
-    workorder_log_action($requestId, 'submitted', '', $name, 'Request submitted.');
+    workorder_log_action($requestId, 'submitted', 'created', 'Request submitted.');
 
     $mailWarning = false;
     if ($head_email !== '') {
@@ -99,8 +99,8 @@ if (isset($_POST['submit'])) {
     workorder_flash(
         $mailWarning ? 'warning' : 'success',
         $mailWarning
-            ? 'Form submitted successfully, but email could not be sent to the approver.'
-            : 'Form submitted successfully.'
+        ? 'Form submitted successfully, but email could not be sent to the approver.'
+        : 'Form submitted successfully.'
     );
     workorder_redirect('workorder_form.php');
 }
@@ -118,6 +118,7 @@ if (isset($_POST['submit'])) {
     <style>
         .bg-menu {
             background-color: #393E46 !important;
+
         }
 
         .btn-menu {
@@ -197,10 +198,24 @@ if (isset($_POST['submit'])) {
             border-radius: 20px;
             color: white;
         }
+
+        @media (max-width: 767.98px) {
+
+            .table.table-responsive tr,
+            .table.table-responsive td {
+                display: block;
+                width: 100% !important;
+            }
+
+            .table.table-responsive td {
+                padding-top: 6px !important;
+                padding-bottom: 6px !important;
+            }
+        }
     </style>
 
     <?php include 'sidebarcss.php'; ?>
-<?php include 'workorder_nav_theme.php'; ?>
+    <?php include 'workorder_nav_theme.php'; ?>
 </head>
 
 <body>
@@ -210,7 +225,7 @@ if (isset($_POST['submit'])) {
         <div id="content">
             <nav class="navbar navbar-expand-lg bg-menu">
                 <div class="container-fluid">
-                    <button type="button" id="sidebarCollapse" class="btn-menu">
+                    <button type="button" id="sidebarCollapse" class="btn-menu my-1">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                     </button>
@@ -224,16 +239,19 @@ if (isset($_POST['submit'])) {
                         <form class="form pb-3" method="POST">
                             <?php echo workorder_csrf_input(); ?>
                             <div class="card shadow">
-                                <div class="card-header bg-header text-white d-flex justify-content-between align-items-center">
+                                <div
+                                    class="card-header bg-header text-white d-flex justify-content-between align-items-center">
                                     <h6 class="mb-0">Workorder Form</h6>
-                                    <a href="workorder_home.php" class="btn btn-light btn-sm" style="font-size:12px!important">
+                                    <a href="workorder_home.php" class="btn btn-light btn-sm"
+                                        style="font-size:12px!important">
                                         <i class="fa-solid fa-home"></i> Home
                                     </a>
                                 </div>
 
                                 <div class="card-body">
                                     <?php if ($flash): ?>
-                                        <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                                        <div
+                                            class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
                                             <?php echo htmlspecialchars($flash['message']); ?>
                                         </div>
                                     <?php endif; ?>
@@ -242,46 +260,60 @@ if (isset($_POST['submit'])) {
                                         <tr>
                                             <td style="font-weight:700;font-size:13px!important">Type:</td>
                                             <td class="pt-3">
-                                                <label><input type="checkbox" class="type-checkbox cbox" name="type" value="Urgent"> Urgent&nbsp;</label>
+                                                <label><input type="checkbox" class="type-checkbox cbox" name="type"
+                                                        value="Urgent"> Urgent&nbsp;</label>
                                             </td>
                                             <td class="pt-3">
-                                                <label><input type="checkbox" class="type-checkbox cbox" name="type" value="Non-Urgent"> Non-Urgent</label>
+                                                <label><input type="checkbox" class="type-checkbox cbox" name="type"
+                                                        value="Non-Urgent"> Non-Urgent</label>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3"><small id="typeError" class="text-danger d-none">Please select a type</small></td>
+                                            <td colspan="3"><small id="typeError" class="text-danger d-none">Please
+                                                    select a type</small></td>
                                         </tr>
 
                                         <tr>
-                                            <td style="font-weight:700;font-size:13px!important">Category: &nbsp; &nbsp;</td>
-                                            <td class="pt-3">
-                                                <label><input type="checkbox" class="category-checkbox cbox" name="category" value="General"> General&nbsp; &nbsp; &nbsp;</label>
+                                            <td style="font-weight:700;font-size:13px!important">Category: &nbsp; &nbsp;
                                             </td>
                                             <td class="pt-3">
-                                                <label><input type="checkbox" class="category-checkbox cbox" name="category" value="Machine Breakdown"> Machine Breakdown</label>
+                                                <label><input type="checkbox" class="category-checkbox cbox"
+                                                        name="category" value="General"> General&nbsp; &nbsp;
+                                                    &nbsp;</label>
+                                            </td>
+                                            <td class="pt-3">
+                                                <label><input type="checkbox" class="category-checkbox cbox"
+                                                        name="category" value="Machine Breakdown"> Machine
+                                                    Breakdown</label>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3"><small id="categoryError" class="text-danger d-none">Please select a category</small></td>
+                                            <td colspan="3"><small id="categoryError" class="text-danger d-none">Please
+                                                    select a category</small></td>
                                         </tr>
 
                                         <tr>
                                             <td style="font-weight:700;font-size:13px!important">For: &nbsp; &nbsp;</td>
                                             <td class="pt-3">
-                                                <label><input type="checkbox" class="category-checkbox cbox" name="depart_type" value="Engineering"> Engineering&nbsp; &nbsp; &nbsp;</label>
+                                                <label><input type="checkbox" class="category-checkbox cbox"
+                                                        name="depart_type" value="Engineering"> Engineering&nbsp; &nbsp;
+                                                    &nbsp;</label>
                                             </td>
                                             <td class="pt-3">
-                                                <label><input type="checkbox" class="category-checkbox cbox" name="depart_type" value="Admin"> Admin</label>
+                                                <label><input type="checkbox" class="category-checkbox cbox"
+                                                        name="depart_type" value="Admin"> Admin</label>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td colspan="3"><small id="departError" class="text-danger d-none">Please select a department</small></td>
+                                            <td colspan="3"><small id="departError" class="text-danger d-none">Please
+                                                    select a department</small></td>
                                         </tr>
                                     </table>
 
                                     <div class="form-group pt-4">
                                         <label class="form-label labelf">Description of workorder requested:</label>
-                                        <textarea class="form-control" id="desc" name="desc" rows="3" minlength="10" maxlength="500"></textarea>
+                                        <textarea class="form-control" id="desc" name="desc" rows="3" minlength="10"
+                                            maxlength="500"></textarea>
                                         <small id="descError" class="text-danger d-none"></small>
                                     </div>
 
@@ -299,12 +331,12 @@ if (isset($_POST['submit'])) {
     </div>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('#sidebar').addClass('active');
-            $('#sidebarCollapse').on('click', function() {
+            $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
             });
-            $('[data-bs-toggle="collapse"]').on('click', function() {
+            $('[data-bs-toggle="collapse"]').on('click', function () {
                 var target = $(this).find('.toggle-icon');
                 if ($(this).attr('aria-expanded') === 'true') {
                     target.removeClass('fa-plus').addClass('fa-minus');
@@ -316,12 +348,12 @@ if (isset($_POST['submit'])) {
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const checkboxes = document.querySelectorAll('.category-checkbox');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
                     const groupName = this.name.split('_')[0];
-                    checkboxes.forEach(function(cb) {
+                    checkboxes.forEach(function (cb) {
                         if (cb !== checkbox && cb.name.startsWith(groupName)) {
                             cb.checked = false;
                         }
@@ -332,12 +364,12 @@ if (isset($_POST['submit'])) {
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const checkboxes = document.querySelectorAll('.type-checkbox');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
                     const groupName = this.name.split('_')[0];
-                    checkboxes.forEach(function(cb) {
+                    checkboxes.forEach(function (cb) {
                         if (cb !== checkbox && cb.name.startsWith(groupName)) {
                             cb.checked = false;
                         }
@@ -348,12 +380,12 @@ if (isset($_POST['submit'])) {
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const checkboxes = document.querySelectorAll('.depart_type-checkbox');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener('change', function () {
                     const groupName = this.name.split('_')[0];
-                    checkboxes.forEach(function(cb) {
+                    checkboxes.forEach(function (cb) {
                         if (cb !== checkbox && cb.name.startsWith(groupName)) {
                             cb.checked = false;
                         }
@@ -364,7 +396,7 @@ if (isset($_POST['submit'])) {
     </script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const form = document.querySelector("form");
 
             const desc = document.getElementById("desc");
@@ -402,17 +434,17 @@ if (isset($_POST['submit'])) {
             desc.addEventListener("input", validateDesc);
 
             const radioGroups = [{
-                    radios: document.querySelectorAll("input[name='type']"),
-                    errorElem: document.getElementById("typeError")
-                },
-                {
-                    radios: document.querySelectorAll("input[name='category']"),
-                    errorElem: document.getElementById("categoryError")
-                },
-                {
-                    radios: document.querySelectorAll("input[name='depart_type']"),
-                    errorElem: document.getElementById("departError")
-                }
+                radios: document.querySelectorAll("input[name='type']"),
+                errorElem: document.getElementById("typeError")
+            },
+            {
+                radios: document.querySelectorAll("input[name='category']"),
+                errorElem: document.getElementById("categoryError")
+            },
+            {
+                radios: document.querySelectorAll("input[name='depart_type']"),
+                errorElem: document.getElementById("departError")
+            }
             ];
 
             function validateRadios(radios, errorElem) {
@@ -425,7 +457,7 @@ if (isset($_POST['submit'])) {
                 group.radios.forEach(r => r.addEventListener("change", () => validateRadios(group.radios, group.errorElem)));
             });
 
-            form.addEventListener("submit", function(e) {
+            form.addEventListener("submit", function (e) {
                 const validDesc = validateDesc();
                 const validRadios = radioGroups.map(g => validateRadios(g.radios, g.errorElem)).every(v => v);
 
@@ -451,5 +483,3 @@ if (isset($_POST['submit'])) {
 </body>
 
 </html>
-
-

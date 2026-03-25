@@ -60,6 +60,9 @@
          display: block;
          color: white !important;
          position: relative;
+         white-space: nowrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
      }
      #sidebar ul li a:hover {
          text-decoration: none;
@@ -71,7 +74,7 @@
      }
      #sidebar a {
          position: relative;
-         padding-right: 40px;
+         padding-right: 52px;
      }
      .toggle-icon {
          font-size: 12px;
@@ -87,6 +90,23 @@
      }
      .collapse:not(.show)+a .toggle-icon {
          transform: translateY(-50%) rotate(0deg);
+     }
+     #sidebar a.sidebar-direct-toggle {
+         display: flex !important;
+         align-items: center !important;
+         justify-content: space-between !important;
+         gap: 12px !important;
+         padding-right: 18px !important;
+         overflow: visible !important;
+         text-overflow: clip !important;
+     }
+     #sidebar a.sidebar-direct-toggle .toggle-icon {
+         position: static !important;
+         right: auto !important;
+         top: auto !important;
+         transform: none !important;
+         margin-left: auto !important;
+         flex: 0 0 auto !important;
      }
      ul ul a {
          font-size: 11px !important;

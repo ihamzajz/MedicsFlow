@@ -6,51 +6,68 @@
         font-style: normal;
     }
 
-    .bg-menu {
-        background-color: #393E46 !important;
-    }
+      .bg-menu {
+            background-color: #393E46 !important;
 
-    .btn-menu,
-    #sidebarCollapse.btn-menu,
-    #sidebarCollapse.btn,
-    #sidebarCollapse.btn.btn-menu,
-    #sidebarCollapse.btn.btn-success,
-    #sidebarCollapse.btn.btn-info,
-    #sidebarCollapse.btn.btn-success.btn-menu {
+        }
+
+        .btn-menu {
+            font-size: 12.5px;
+            background-color: #FFB22C !important;
+            padding: 5px 10px;
+            font-weight: 600;
+            border: none !important;
+        }
+
+    #content>nav.navbar .workorder-menu-toggle {
         display: inline-flex !important;
         align-items: center !important;
+        justify-content: center !important;
         gap: 7px !important;
         font-size: 12.5px !important;
-        background-color: #FFB22C !important;
-        padding: 6px 11px !important;
         font-weight: 600 !important;
-        border: none !important;
-        color: #212529 !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
         line-height: 1 !important;
+        padding: 5px 10px !important;
+        margin-top: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
+        background-color: #FFB22C !important;
+        color: #212529 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        text-decoration: none !important;
     }
 
-    #sidebarCollapse.btn-menu:hover,
-    #sidebarCollapse.btn:hover,
-    .btn-menu:hover {
+    #content>nav.navbar .workorder-menu-toggle:hover {
         background-color: #ffbf47 !important;
         color: #212529 !important;
     }
 
-    #sidebarCollapse.btn-menu:focus,
-    #sidebarCollapse.btn:focus,
-    .btn-menu:focus {
+    #content>nav.navbar .workorder-menu-toggle:focus,
+    #content>nav.navbar .workorder-menu-toggle:active {
         box-shadow: none !important;
         outline: none !important;
     }
 
     nav.navbar.navbar-light.bg-light {
         background-color: #393E46 !important;
+        padding: 0 !important;
     }
 
     nav.navbar.navbar-expand-lg.navbar-light.bg-light {
         background-color: #393E46 !important;
+        padding: 0 !important;
+    }
+
+    nav.navbar.navbar-expand-lg.bg-menu {
+        background-color: #393E46 !important;
+        padding: 0 !important;
+    }
+
+    #content>nav.navbar .container-fluid {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 12px !important;
     }
 
     a[href="workorder_home.php"],
@@ -249,5 +266,45 @@
 
     .table-responsive.dt-wrap::-webkit-scrollbar-track {
         background: #eef2f7 !important;
+    }
+
+    .workorder-toolbar {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 10px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .workorder-toolbar .form-control {
+        width: 100% !important;
+        max-width: 320px !important;
+        font-size: 11.5px !important;
+    }
+
+    .workorder-detail-shell {
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 14px 18px !important;
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 12px !important;
+    }
+
+    .workorder-detail-shell textarea,
+    .workorder-detail-shell input[type="text"] {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    @media (max-width: 991.98px) {
+        .workorder-detail-shell {
+            padding: 14px !important;
+        }
+
+        .workorder-detail-shell .row > [class*="col-"],
+        .workorder-detail-shell .row > [class*="col-md-"] {
+            margin-bottom: 12px !important;
+        }
     }
 </style>

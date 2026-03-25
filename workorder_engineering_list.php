@@ -327,7 +327,7 @@ function pageUrl($p)
     <div id="content">
       <nav class="navbar navbar-expand-lg bg-menu">
         <div class="container-fluid">
-          <button type="button" id="sidebarCollapse" class="btn-menu">
+          <button type="button" id="sidebarCollapse" class="btn-menu my-1">
             <i class="fas fa-align-left"></i>
             <span>Menu</span>
           </button>

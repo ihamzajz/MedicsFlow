@@ -271,9 +271,9 @@ $rowDepartT  = (string)($row['depart_type'] ?? '');
         <?php include 'sidebar1.php'; ?>
 
         <div id="content">
-            <nav class="navbar navbar-light bg-menu">
+            <nav class="navbar navbar-expand-lg bg-menu">
                 <div class="container-fluid">
-                    <button id="sidebarCollapse" class="btn btn-menu">
+                    <button type="button" id="sidebarCollapse" class="btn-menu my-1">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                     </button>

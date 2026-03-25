@@ -189,19 +189,20 @@ workorder_require_login();
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
 
-                    <button type="button" id="sidebarCollapse" class="btn btn-success btn-menu">
+            <button type="button" id="sidebarCollapse" class="btn-menu my-1">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                     </button>
                 </div>
             </nav>
 
-
-
+            <div class="container-fluid px-3 pt-3">
+            <div class="workorder-toolbar">
             <a class="btn btn-dark btn-sm" href="workorder_home.php" style="font-size:11px!important"><i class="fa-solid fa-arrow-left"></i> Home</a>
 
              <button id="excel" class="btn btn-success btn-sm dataExport" data-type="excel">Excel</button>
-             <input id="filter" type="text" class="form-control w-25" placeholder="Search here..." style="height: 30px; display:inline;font-size:11px!important">
+             <input id="filter" type="text" class="form-control" placeholder="Search here..." style="height: 30px; display:inline;font-size:11px!important">
+            </div>
 				<?php
 				$select = "SELECT * FROM workorder_form ORDER BY date DESC";
 				$select_q = mysqli_query($conn,$select);
@@ -209,7 +210,8 @@ workorder_require_login();
 				?>
 
 				<div id="dataTableCont">
-                <table  class="table table-responsive table-bordered mt-1" id="myTable">
+                <div class="table-responsive dt-wrap">
+                <table  class="table table-bordered mt-1 mb-0" id="myTable">
                 <thead style="background-color:#0D9276;color:white">
 						<tr>
 					  <th scope="col">Id</th>
@@ -250,7 +252,9 @@ workorder_require_login();
 					}
 					?>
 				</table>
+                </div>
 				</div>
+            </div>
 
 
 

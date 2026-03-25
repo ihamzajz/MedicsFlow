@@ -121,17 +121,18 @@ function pageUrl($p)
       background: #c7ccdb !important;
     }
 
-    .bg-menu {
-      background-color: #393E46 !important;
-    }
+      .bg-menu {
+            background-color: #393E46 !important;
 
-    .btn-menu {
-      font-size: 12.5px;
-      background-color: #FFB22C !important;
-      padding: 5px 10px;
-      font-weight: 600;
-      border: none !important;
-    }
+        }
+
+        .btn-menu {
+            font-size: 12.5px;
+            background-color: #FFB22C !important;
+            padding: 5px 10px;
+            font-weight: 600;
+            border: none !important;
+        }
 
     .card {
       border-radius: 16px;
@@ -230,14 +231,14 @@ function pageUrl($p)
     <?php include 'sidebar1.php'; ?>
 
     <div id="content">
-      <nav class="navbar navbar-expand-lg bg-menu">
-        <div class="container-fluid">
-          <button type="button" id="sidebarCollapse" class="btn-menu">
-            <i class="fas fa-align-left"></i>
-            <span>Menu</span>
-          </button>
-        </div>
-      </nav>
+          <nav class="navbar navbar-expand-lg bg-menu">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn-menu my-1">
+                        <i class="fas fa-align-left"></i>
+                        <span>Menu</span>
+                    </button>
+                </div>
+            </nav>
       <div class="container-fluid py-3">
         <div class="container-xxl">
 

@@ -296,17 +296,20 @@ $flash = workorder_take_flash();
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
 
-                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <button type="button" id="sidebarCollapse" class="btn-menu my-1">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                     </button>
                 </div>
             </nav>
 
+             <div class="container-fluid px-3 pt-3">
              <h3 class="text-center pb-3" style="font-size: 32px;">Pending (CEO) Workorder Requests</h3>
+             <div class="workorder-toolbar">
              <button id="print1" type="button" class="btn btn-danger" onclick="getPrint()">PDF</button>
              <button id="excel" class="btn btn-success dataExport" data-type="excel">Excel</button>
-             <input id="filter" type="text" class="form-control w-25" placeholder="Search here..." style="height: 30px; display:inline;">
+             <input id="filter" type="text" class="form-control" placeholder="Search here..." style="height: 30px; display:inline;">
+             </div>
              <?php if ($flash): ?>
                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> mt-3">
                  <?php echo htmlspecialchars($flash['message']); ?>
@@ -328,7 +331,8 @@ $flash = workorder_take_flash();
 
                 <div id="dataTableCont">
 
-                <table  class="table table-responsive table-bordered mt-1" id="myTable">
+                <div class="table-responsive dt-wrap">
+                <table  class="table table-bordered mt-1 mb-0" id="myTable">
                     <thead class="thead-dark">
                         <tr >
                       <th scope="col">Id</th>
@@ -402,7 +406,9 @@ $flash = workorder_take_flash();
                     }
                     ?>
                 </table>
+                </div>
                     
+                </div>
                 </div>
                 
  

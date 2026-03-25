@@ -196,7 +196,7 @@ $expense_finance = $_SESSION['expense_finance'] ?? 'No';
         <?php } ?>
 
         <li class="">
-            <a href="workorder_home.php" style="letter-spacing:0.5px">
+            <a href="workorder_home.php" class="sidebar-direct-toggle" style="letter-spacing:0.5px">
                 Work Order
                 <i class="fas fa-plus toggle-icon"></i>
             </a>

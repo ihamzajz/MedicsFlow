@@ -161,7 +161,7 @@ workorder_require_login();
                 <!-- navbar -->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light">
                     <div class="container-fluid">
-                        <button type="button" id="sidebarCollapse" class="btn btn-success btn-menu">
+            <button type="button" id="sidebarCollapse" class="btn-menu my-1">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                         </button>
@@ -180,7 +180,7 @@ workorder_require_login();
                                 return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
                             }, $row);
                     		?>
-                   <div class="container" style="background-color:White;border:1px solid black">
+                   <div class="container workorder-detail-shell">
                    <a class="btn btn-dark btn-sm mt-1" href="workorder_home.php" style="font-size:11px!important"><i class="fa-solid fa-arrow-left"></i> Home</a>
                    <a class="btn btn-dark btn-sm mt-1" href="workorder_adminall_list.php" style="font-size:11px!important"><i class="fa-solid fa-arrow-left"></i> Back</a>
 
