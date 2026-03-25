@@ -1,93 +1,81 @@
 <?php
 
-session_start();
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-date_default_timezone_set("Asia/Karachi");
+workorder_require_login();
+workorder_require_post_csrf();
 
-$id            = $_GET['id'];
-$email         = $_GET['email'];
-$user_name     = $_GET['name'];
-$approver_name = $_SESSION['fullname'];
-$date          = date('Y-m-d H:i:s');
+$requestId = workorder_get_request_id_from_post();
+$reason = trim((string)($_POST['reason'] ?? ''));
 
-/* =========================
-   Update DB
-========================= */
-$update = "
-UPDATE workorder_form 
-SET 
-    head_status = 'Rejected',
-    head_msg    = 'Rejected By $approver_name',
-    head_date   = '$date',
-    task_status = 'Rejected By $approver_name',
-    final_status = 'Rejected'
-WHERE id = $id
-";
-mysqli_query($conn, $update);
+if ($reason === '') {
+    workorder_flash('danger', 'Rejection reason is required.');
+    workorder_redirect('workorder_head_list.php');
+}
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+$request = workorder_fetch_request($requestId);
 
-require 'vendor/autoload.php';
+if (!$request) {
+    workorder_flash('danger', 'Workorder request not found.');
+    workorder_redirect('workorder_head_list.php');
+}
 
-$mail = new PHPMailer(true);
+if (!workorder_can_head_act($request)) {
+    workorder_abort(403, 'You are not allowed to reject this workorder.');
+}
+
+if (!workorder_request_is_head_pending($request)) {
+    workorder_flash('danger', 'This request is no longer pending head approval.');
+    workorder_redirect('workorder_head_list.php');
+}
+
+$approverName = (string)workorder_session('fullname');
+$now = workorder_now();
+$headMsg = 'Rejected By ' . $approverName;
+$taskStatus = 'Rejected By ' . $approverName;
+$finalStatus = 'Rejected';
+$pending = 'Pending';
+$rejected = 'Rejected';
+
+$stmt = workorder_prepare(
+    'UPDATE workorder_form
+     SET head_status = ?, head_msg = ?, head_date = ?, task_status = ?, final_status = ?, reason = ?
+     WHERE id = ? AND head_status = ?'
+);
+$stmt->bind_param('ssssssis', $rejected, $headMsg, $now, $taskStatus, $finalStatus, $reason, $requestId, $pending);
+$stmt->execute();
+$updated = $stmt->affected_rows > 0;
+$stmt->close();
+
+if (!$updated) {
+    workorder_flash('danger', 'This request was already updated by someone else.');
+    workorder_redirect('workorder_head_list.php');
+}
+
+workorder_log_action($requestId, 'head', 'rejected', $reason);
+
+$requesterName = (string)($request['name'] ?? 'Concern');
+$requesterEmail = (string)($request['email'] ?? '');
+$reasonHtml = nl2br(workorder_h($reason));
 
 try {
-    /* =========================
-       SMTP Settings
-    ========================= */
-    $mail->SMTPDebug   = 0;
-    $mail->Debugoutput = 'error_log';
-    $mail->isSMTP();
-    $mail->Host       = 'smtp.office365.com';
-    $mail->SMTPAuth   = true;
-    $mail->Username   = 'info@medicslab.com';
-    $mail->Password   = 'kcmzrskfgmwzzshz';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port       = 587;
-
-    /* =========================
-       Recipient
-    ========================= */
-    $mail->setFrom('info@medicslab.com', 'Medics Digital Form');
-    $mail->addAddress($email);
-
-    /* =========================
-       Email Content
-    ========================= */
-    $mail->isHTML(true);
-    $mail->Subject = "Workorder Notification";
+    $mail = workorder_create_mailer('default');
+    $mail->addAddress($requesterEmail);
+    $mail->Subject = 'Workorder Notification';
     $mail->Body = "
-    <p>Dear {$user_name},</p>
-
-    <p>
-    We regret to inform you that your work order request
-    <strong>#{$id}</strong> has been <strong>rejected</strong> by
-    <strong>{$approver_name}</strong>.
-    </p>
-
-    <p>
-    If you require further clarification or wish to discuss this decision,
-    please feel free to reach out.
-    </p>
-
+    <p>Dear {$requesterName},</p>
+    <p>We regret to inform you that your work order request <strong>#{$requestId}</strong> has been <strong>rejected</strong> by <strong>{$approverName}</strong>.</p>
+    <p><strong>Reason:</strong> {$reasonHtml}</p>
+    <p>If you require further clarification or wish to discuss this decision, please feel free to reach out.</p>
     <p>Thank you for your understanding.</p>
-
-    <p>
-    Best regards,<br>
-    <strong>MedicsFlow</strong>
-    </p>
+    <p>Best regards,<br><strong>MedicsFlow</strong></p>
     ";
-
     $mail->send();
-    header("Location:workorder_head_list.php");
-    exit;
-
-} catch (Exception $e) {
-    error_log($mail->ErrorInfo);
-    header("Location:workorder_head_list.php");
-    exit;
+    workorder_flash('success', 'Workorder rejected successfully.');
+} catch (Throwable $e) {
+    error_log('Workorder head reject mail failed: ' . $e->getMessage());
+    workorder_flash('warning', 'Workorder rejected, but the notification email could not be sent.');
 }
-?>
+
+workorder_redirect('workorder_head_list.php');

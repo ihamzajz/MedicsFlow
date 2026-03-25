@@ -1,6 +1,6 @@
 <?php
-session_start();
-include "dbconfig.php";
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 
 /* =========================
    Session

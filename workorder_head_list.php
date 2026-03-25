@@ -1,13 +1,7 @@
 <?php
 ob_start();
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-  header('Location: login.php');
-  exit;
-}
-
-include "dbconfig.php";
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 
 // ===== Session =====
 $id         = $_SESSION['id'] ?? '';
@@ -17,6 +11,7 @@ $email      = $_SESSION['email'] ?? '';
 $department = $_SESSION['department'] ?? '';
 $role       = $_SESSION['role'] ?? '';
 $added_date = $_SESSION['added_date'] ?? '';
+$flash = workorder_take_flash();
 
 // ✅ Head dept session (your old logic)
 $be_depart   = $_SESSION['be_depart'] ?? '';
@@ -426,6 +421,11 @@ function pageUrl($p)
           <!-- Table -->
           <div class="card shadow-sm border-0">
             <div class="card-body">
+              <?php if ($flash): ?>
+                <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                  <?php echo htmlspecialchars($flash['message']); ?>
+                </div>
+              <?php endif; ?>
 
               <div class="table-responsive dt-wrap">
                 <table class="table table-hover align-middle mb-0" id="myTable">
@@ -471,19 +471,24 @@ function pageUrl($p)
                           </td>
 
                           <td style="white-space:nowrap;">
-                            <a
-                              href="workorder_head_approve.php?id=<?php echo $rid; ?>&email=<?php echo urlencode($rowEmail); ?>&name=<?php echo urlencode($rowName); ?>&depart_type=<?php echo urlencode($rowDepartType); ?>&type=<?php echo urlencode($rowType); ?>&category=<?php echo urlencode($rowCategory); ?>"
-                              class="btn-approve">
-                              <i class="fa-solid fa-check me-1"></i> Approve
-                            </a>
+                            <form method="POST" action="workorder_head_approve.php" class="m-0">
+                              <?php echo workorder_csrf_input(); ?>
+                              <input type="hidden" name="request_id" value="<?php echo $rid; ?>">
+                              <button type="submit" class="btn-approve border-0">
+                                <i class="fa-solid fa-check me-1"></i> Approve
+                              </button>
+                            </form>
                           </td>
 
                           <td style="white-space:nowrap;">
-                            <a
-                              href="workorder_head_reject.php?id=<?php echo $rid; ?>&email=<?php echo urlencode($rowEmail); ?>&name=<?php echo urlencode($rowName); ?>"
-                              class="btn-reject">
-                              <i class="fa-solid fa-xmark me-1"></i> Reject
-                            </a>
+                            <form method="POST" action="workorder_head_reject.php" class="m-0" id="headRejectForm<?php echo $rid; ?>">
+                              <?php echo workorder_csrf_input(); ?>
+                              <input type="hidden" name="request_id" value="<?php echo $rid; ?>">
+                              <input type="hidden" name="reason" value="">
+                              <button type="button" class="btn-reject border-0" onclick="workorderSubmitReason('headRejectForm<?php echo $rid; ?>', 'Enter reason for rejection:')">
+                                <i class="fa-solid fa-xmark me-1"></i> Reject
+                              </button>
+                            </form>
                           </td>
 
                           <td><?php echo htmlspecialchars((string)$row['id']); ?></td>
@@ -616,6 +621,7 @@ function pageUrl($p)
       });
     </script>
 
+    <?php echo workorder_render_action_forms_js(); ?>
     <?php include 'footer.php'; ?>
 </body>
 

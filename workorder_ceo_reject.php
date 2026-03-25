@@ -1,54 +1,69 @@
 <?php
 
-session_start();
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-$id=$_GET['id'];
-$email = $_GET['email'];
-$name = $_SESSION['fullname'];
+workorder_require_login();
+workorder_require_post_csrf();
 
-// echo "$email";
-
-$update="UPDATE workorder_form SET ceo_status = 'Rejected',ceo_msg='Rejected By $name',task_status='Rejected By $name' WHERE id = $id";
-$update_q=mysqli_query($conn,$update);
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
-
-//Load Composer's autoloader
-require 'vendor/autoload.php';
-
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
-
-try {
-    //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-    $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'hamza.mediclabs@gmail.com';                     //SMTP username
-    $mail->Password   = 'hwxxkrrezfslrjil';                               //SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-    $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-    //Recipients
-    $mail->setFrom('hamza.mediclabs@gmail.com', 'Medics Digital Form');
-    $mail->addAddress($email);     //Add a recipient;
-
-
-    //Content
-    $mail->isHTML(true);                                  //Set email format to HTML
-    $mail->Subject = "WorkOrder Request Update";
-    $mail->Body    = "Your WorkOrder request has been Rejected by $name";
-    $mail->AltBody = "Your WorkOrder request has been Rejected by '$name";
-
-    $mail->send();
-    //echo 'Message has been sent';
-    header("Location:workorder_ceo_list.php");
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+if (!workorder_can_ceo_act()) {
+    workorder_abort(403, 'You are not allowed to reject CEO workorders.');
 }
 
-?>
+$requestId = workorder_get_request_id_from_post();
+$reason = trim((string)($_POST['reason'] ?? ''));
+
+if ($reason === '') {
+    workorder_flash('danger', 'Rejection reason is required.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+$request = workorder_fetch_request($requestId);
+
+if (!$request) {
+    workorder_flash('danger', 'Workorder request not found.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+if (!workorder_request_is_ceo_pending($request)) {
+    workorder_flash('danger', 'This request is no longer pending CEO approval.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+$approverName = (string)workorder_session('fullname');
+$rejected = 'Rejected';
+$ceoMsg = 'Rejected By ' . $approverName;
+$taskStatus = 'Rejected By ' . $approverName;
+
+$stmt = workorder_prepare('UPDATE workorder_form SET ceo_status = ?, ceo_msg = ?, task_status = ?, reason = ? WHERE id = ? AND ceo_status = ?');
+$pending = 'Pending';
+$stmt->bind_param('ssssis', $rejected, $ceoMsg, $taskStatus, $reason, $requestId, $pending);
+$stmt->execute();
+$updated = $stmt->affected_rows > 0;
+$stmt->close();
+
+if (!$updated) {
+    workorder_flash('danger', 'This request was already updated by someone else.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+workorder_log_action($requestId, 'ceo', 'rejected', $reason);
+
+try {
+    $mail = workorder_create_mailer('ceo');
+    $mail->addAddress((string)($request['email'] ?? ''));
+    $reasonHtml = nl2br(workorder_h($reason));
+    $mail->Subject = 'WorkOrder Request Update';
+    $mail->Body = "
+    <p>Your WorkOrder request has been Rejected by " . workorder_h($approverName) . ".</p>
+    <p><strong>Reason:</strong> {$reasonHtml}</p>
+    ";
+    $mail->AltBody = 'Your WorkOrder request has been Rejected by ' . $approverName . '. Reason: ' . $reason;
+    $mail->send();
+    workorder_flash('success', 'Workorder rejected successfully.');
+} catch (Throwable $e) {
+    error_log('Workorder CEO reject mail failed: ' . $e->getMessage());
+    workorder_flash('warning', 'Workorder rejected, but the notification email could not be sent.');
+}
+
+workorder_redirect('workorder_ceo_list.php');

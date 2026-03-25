@@ -1,66 +1,77 @@
 <?php
 
-session_start();
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-date_default_timezone_set("Asia/Karachi");
+workorder_require_login();
+workorder_require_post_csrf();
 
-$id = $_GET['id'];
-$email = $_GET['email'];
-$name = $_SESSION['fullname'];
-$date =  date('Y-m-d H:i:s');
-// echo "$email";
-$date =  date('Y-m-d H:i:s');
-$reason = $_GET['reason'];
+if (!workorder_can_engineering_act()) {
+    workorder_abort(403, 'You are not allowed to reject engineering workorders.');
+}
 
-$update = "UPDATE workorder_form SET engineering_status = 'Rejected',engineering_msg = 'Rejected By $name',eng_date =  '$date' , task_status='Rejected By $name' 
-, final_status = 'Rejected' , reason = '$reason' WHERE id = $id";
-$update_q = mysqli_query($conn, $update);
+$requestId = workorder_get_request_id_from_post();
+$reason = trim((string)($_POST['reason'] ?? ''));
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+if ($reason === '') {
+    workorder_flash('danger', 'Rejection reason is required.');
+    workorder_redirect('workorder_engineering_list.php');
+}
 
-//Load Composer's autoloader
-require 'vendor/autoload.php';
+$request = workorder_fetch_request($requestId);
 
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
+if (!$request) {
+    workorder_flash('danger', 'Workorder request not found.');
+    workorder_redirect('workorder_engineering_list.php');
+}
+
+if (strcasecmp((string)($request['depart_type'] ?? ''), 'Engineering') !== 0 || !workorder_request_is_engineering_pending($request)) {
+    workorder_flash('danger', 'This request is no longer available for engineering rejection.');
+    workorder_redirect('workorder_engineering_list.php');
+}
+
+$approverName = (string)workorder_session('fullname');
+$now = workorder_now();
+$engineeringMsg = 'Rejected By ' . $approverName;
+$taskStatus = 'Rejected By ' . $approverName;
+$finalStatus = 'Rejected';
+$pending = 'Pending';
+$rejected = 'Rejected';
+
+$stmt = workorder_prepare(
+    'UPDATE workorder_form
+     SET engineering_status = ?, engineering_msg = ?, eng_date = ?, task_status = ?, final_status = ?, reason = ?
+     WHERE id = ? AND engineering_status = ?'
+);
+$stmt->bind_param('ssssssis', $rejected, $engineeringMsg, $now, $taskStatus, $finalStatus, $reason, $requestId, $pending);
+$stmt->execute();
+$updated = $stmt->affected_rows > 0;
+$stmt->close();
+
+if (!$updated) {
+    workorder_flash('danger', 'This request was already updated by someone else.');
+    workorder_redirect('workorder_engineering_list.php');
+}
+
+workorder_log_action($requestId, 'engineering', 'rejected', $reason);
 
 try {
-    $mail->SMTPDebug = 0;
-    $mail->Debugoutput = 'error_log';
-    $mail->isSMTP();
-    $mail->Host = 'smtp.office365.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'info@medicslab.com';
-    $mail->Password = 'kcmzrskfgmwzzshz';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
-
-    $mail->setFrom('info@medicslab.com', 'Medics Digital form');
-    $mail->addAddress($email);
-    // $mail->addAddress('muhammad.hamza@medicslab.com');
-
-
-    //Content
-    $mail->isHTML(true);                                  //Set email format to HTML
-    $mail->Subject = "Workorder Notification";
+    $mail = workorder_create_mailer('default');
+    $mail->addAddress((string)($request['email'] ?? ''));
+    $reasonHtml = nl2br(workorder_h($reason));
+    $mail->Subject = 'Workorder Notification';
     $mail->Body = "
-<p>Dear Concern,</p>
-<p>Your work order request <strong>#{$id}</strong> has been <strong>Rejected</strong> by <strong>{$name}</strong>.</p>
-<p>If you have any questions or require further assistance, please feel free to contact us.</p>
-<p>Thank you.</p>
-<p>
-Best regards,<br>
-<strong>MedicsFlow</strong>
-</p>
-";
-
+    <p>Dear Concern,</p>
+    <p>Your work order request <strong>#{$requestId}</strong> has been <strong>Rejected</strong> by <strong>{$approverName}</strong>.</p>
+    <p><strong>Reason:</strong> {$reasonHtml}</p>
+    <p>Thank you.</p>
+    <p>Best regards,<br><strong>MedicsFlow</strong></p>
+    ";
     $mail->send();
-    //echo 'Message has been sent';
-    header("Location:workorder_engineering_list.php");
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-    header("Location:workorder_engineering_list.php");
+    workorder_flash('success', 'Workorder rejected successfully.');
+} catch (Throwable $e) {
+    error_log('Workorder engineering reject mail failed: ' . $e->getMessage());
+    workorder_flash('warning', 'Workorder rejected, but the notification email could not be sent.');
 }
+
+workorder_redirect('workorder_engineering_list.php');

@@ -1,22 +1,109 @@
 <?php
 ob_start(); // ✅ allows showing loading overlay + flushing before email send
 
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
+workorder_require_login();
 
 $head_email = $_SESSION['head_email'];
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+$flash = workorder_take_flash();
 
-require 'vendor/autoload.php';
+if (isset($_POST['submit'])) {
+    workorder_require_post_csrf();
 
-$mail = new PHPMailer(true);
+    $name        = (string)($_SESSION['fullname'] ?? '');
+    $email       = (string)($_SESSION['email'] ?? '');
+    $username    = (string)($_SESSION['username'] ?? '');
+    $department  = (string)($_SESSION['department'] ?? '');
+    $role        = (string)($_SESSION['role'] ?? '');
+    $date        = workorder_now();
+    $desc        = trim((string)($_POST['desc'] ?? ''));
+    $head_email  = (string)($_SESSION['head_email'] ?? '');
+    $be_depart   = (string)($_SESSION['be_depart'] ?? '');
+    $be_role     = (string)($_SESSION['be_role'] ?? '');
+    $type        = trim((string)($_POST['type'] ?? ''));
+    $category    = trim((string)($_POST['category'] ?? ''));
+    $depart_type = trim((string)($_POST['depart_type'] ?? ''));
+
+    if ($type === '' || $category === '' || $depart_type === '' || $desc === '') {
+        workorder_flash('danger', 'Please complete all required fields before submitting.');
+        workorder_redirect('workorder_form.php');
+    }
+
+    $stmt = workorder_prepare(
+        'INSERT INTO workorder_form
+        (name, username, email, date, department, role, be_depart, be_role, type, category, description, head_status, engineering_status, finance_status, ceo_status, amount, task_status, admin_status, depart_type)
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+    );
+
+    $pending = 'Pending';
+    $amount = 'TBD';
+    $taskStatus = 'Task is going through approval';
+
+    $stmt->bind_param(
+        'sssssssssssssssssss',
+        $name,
+        $username,
+        $email,
+        $date,
+        $department,
+        $role,
+        $be_depart,
+        $be_role,
+        $type,
+        $category,
+        $desc,
+        $pending,
+        $pending,
+        $pending,
+        $pending,
+        $amount,
+        $taskStatus,
+        $pending,
+        $depart_type
+    );
+
+    if (!$stmt->execute()) {
+        $stmt->close();
+        workorder_flash('danger', 'Form submission failed. Please try again.');
+        workorder_redirect('workorder_form.php');
+    }
+
+    $requestId = (int)workorder_db()->insert_id;
+    $stmt->close();
+    workorder_log_action($requestId, 'submitted', '', $name, 'Request submitted.');
+
+    $mailWarning = false;
+    if ($head_email !== '') {
+        try {
+            $mail = workorder_create_mailer();
+            $mail->addAddress($head_email, 'HOD');
+            $mail->Subject = 'Workorder Notification';
+            $mail->Body = '
+                <p>Dear HOD,</p>
+                <p>A new work order request has been submitted by <strong>' . workorder_h($name) . '</strong>.</p>
+                <p>Kindly review and process the request in <strong>MedicsFlow</strong>.</p>
+                <p>Thank you.</p>
+                <p>Best regards,<br><strong>MedicsFlow</strong></p>';
+            $mail->send();
+        } catch (Throwable $e) {
+            error_log('Workorder mail error: ' . $e->getMessage());
+            $mailWarning = true;
+        }
+    } else {
+        $mailWarning = true;
+    }
+
+    workorder_flash(
+        $mailWarning ? 'warning' : 'success',
+        $mailWarning
+            ? 'Form submitted successfully, but email could not be sent to the approver.'
+            : 'Form submitted successfully.'
+    );
+    workorder_redirect('workorder_form.php');
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -135,6 +222,7 @@ $mail = new PHPMailer(true);
                     <div class="col-md-8 pt-md-4">
 
                         <form class="form pb-3" method="POST">
+                            <?php echo workorder_csrf_input(); ?>
                             <div class="card shadow">
                                 <div class="card-header bg-header text-white d-flex justify-content-between align-items-center">
                                     <h6 class="mb-0">Workorder Form</h6>
@@ -144,6 +232,12 @@ $mail = new PHPMailer(true);
                                 </div>
 
                                 <div class="card-body">
+                                    <?php if ($flash): ?>
+                                        <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> py-2 px-3 small fw-semibold">
+                                            <?php echo htmlspecialchars($flash['message']); ?>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <table class="table table-responsive mt-3">
                                         <tr>
                                             <td style="font-weight:700;font-size:13px!important">Type:</td>
@@ -197,136 +291,6 @@ $mail = new PHPMailer(true);
                                 </div>
                             </div>
                         </form>
-
-                        <?php
-                        include 'dbconfig.php';
-
-                        if (isset($_POST['submit'])) {
-
-                            date_default_timezone_set("Asia/Karachi");
-
-                            $id         = $_SESSION['id'];
-                            $name       = $_SESSION['fullname'];
-                            $email      = $_SESSION['email'];
-                            $username   = $_SESSION['username'];
-                            $department = $_SESSION['department'];
-                            $role       = $_SESSION['role'];
-                            $date       = date('Y-m-d H:i:s');
-
-                            $desc = mysqli_real_escape_string($conn, $_POST['desc']);
-
-                            $head_email = $_SESSION['head_email'];
-
-                            $be_depart = $_SESSION['be_depart'];
-                            $be_role   = $_SESSION['be_role'];
-
-                            $type        = $_POST['type'];
-                            $category    = $_POST['category'];
-                            $depart_type = $_POST['depart_type'];
-
-                            $insert = "INSERT INTO workorder_form
-                                (name,username,email,date,department,role,be_depart,be_role,type,category,description,head_status,engineering_status,finance_status,ceo_status,amount,task_status,admin_status,depart_type)
-                                VALUES
-                                ('$name','$username','$email','$date','$department','$role','$be_depart','$be_role','$type','$category','$desc','Pending','Pending','Pending','Pending','TBD','Task is going through approval','Pending','$depart_type')";
-
-                            $insert_q = mysqli_query($conn, $insert);
-
-                            if ($insert_q) {
-
-                                // ✅ show loading overlay BEFORE sending email
-                                echo '
-                                <div id="loadingMsg" style="
-                                    position:fixed;
-                                    top:0;left:0;width:100%;height:100%;
-                                    display:flex;align-items:center;justify-content:center;
-                                    background:rgba(0,0,0,0.6);
-                                    color:white;font-size:22px;z-index:9999;
-                                    flex-direction:column;">
-                                    <div style="padding:20px;background:#222;border-radius:10px;">
-                                        <p>📨 Please wait, your request is being processed...</p>
-                                        <p>Email is sending, this may take a few seconds.</p>
-                                    </div>
-                                </div>
-                                ';
-
-                                // ✅ flush so user sees overlay immediately
-                                ob_flush();
-                                flush();
-
-                                // ✅ now send email (slow part)
-                                try {
-                                    // $mail = new PHPMailer(true);
-                                    $mail->SMTPDebug = 0;
-                                    $mail->Debugoutput = 'error_log';
-                                    $mail->isSMTP();
-                                    $mail->Host = 'smtp.office365.com';
-                                    $mail->SMTPAuth = true;
-                                    $mail->Username = 'info@medicslab.com';
-                                    $mail->Password = 'kcmzrskfgmwzzshz';
-                                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                                    $mail->Port = 587;
-
-                                    $mail->setFrom('info@medicslab.com', 'Medics Digital form');
-                                    $mail->addAddress($head_email, 'HOD');
-                                    //$mail->addAddress('muhammad.hamza@medicslab.com', 'HOD');
-
-                                    $mail->isHTML(true);
-                                    $mail->Subject = "Workorder Notification";
-                                    $mail->Body = "
-                                        <p>Dear HOD,</p>
-
-                                        <p>
-                                        A new work order request has been submitted by
-                                        <strong>{$name}</strong>.
-                                        </p>
-
-                                        <p>
-                                        Kindly review and process the request in <strong>MedicsFlow</strong>.
-                                        </p>
-
-                                        <p>
-                                        Thank you.
-                                        </p>
-
-                                        <p>
-                                        Best regards,<br>
-                                        <strong>MedicsFlow</strong>
-                                        </p>
-                                        ";
-
-
-                                    $mail->send();
-
-                                    // ✅ success
-                                    echo '
-                                    <script>
-                                        document.getElementById("loadingMsg").remove();
-                                        alert("✅ Form submitted successfully");
-                                        window.location.href = "workorder_form.php";
-                                    </script>';
-                                    exit;
-                                } catch (Exception $e) {
-                                    // ✅ DB saved but email failed
-                                    error_log("Mailer Error: " . $mail->ErrorInfo);
-
-                                    echo '
-                                    <script>
-                                        document.getElementById("loadingMsg").remove();
-                                        alert("⚠️ Form submitted successfully, but email failed to send. Please contact IT.");
-                                        window.location.href = "workorder_form.php";
-                                    </script>';
-                                    exit;
-                                }
-                            } else {
-                                echo '
-                                <script>
-                                    alert("❌ Form submission failed!");
-                                    window.location.href = "workorder_form.php";
-                                </script>';
-                                exit;
-                            }
-                        }
-                        ?>
 
                     </div>
                 </div>
@@ -487,4 +451,5 @@ $mail = new PHPMailer(true);
 </body>
 
 </html>
+
 

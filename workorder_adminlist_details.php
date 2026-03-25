@@ -1,12 +1,6 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php');
-    exit;
-}
-
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
 
 /* =========================
    Helpers
@@ -27,9 +21,7 @@ function fmt_date_ddmmyyyy($val): string
    Fetch record (Admin details)
 ========================= */
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$select = "SELECT * FROM workorder_form WHERE id = {$id} LIMIT 1";
-$select_q = mysqli_query($conn, $select);
-$row = mysqli_fetch_assoc($select_q);
+$row = $id > 0 ? workorder_fetch_request($id) : null;
 
 if (!$row) {
     die("No record found!");

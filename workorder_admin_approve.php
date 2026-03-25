@@ -1,65 +1,69 @@
 <?php
 
-session_start();
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-date_default_timezone_set("Asia/Karachi");
+workorder_require_login();
+workorder_require_post_csrf();
 
-$id = $_GET['id'];
-$email = $_GET['email'];
-$name = $_SESSION['fullname'];
-$date =  date('Y-m-d H:i:s');
-// echo "$email";
+if (!workorder_can_admin_act()) {
+    workorder_abort(403, 'You are not allowed to approve admin workorders.');
+}
 
-$update = "UPDATE workorder_form SET admin_status = 'Approved',admin_msg = 'Approved By $name', admin_date =  '$date', task_status='Work in progress' 
-, final_status = 'Work In Progress' WHERE id = $id";
-$update_q = mysqli_query($conn, $update);
+$requestId = workorder_get_request_id_from_post();
+$request = workorder_fetch_request($requestId);
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+if (!$request) {
+    workorder_flash('danger', 'Workorder request not found.');
+    workorder_redirect('workorder_admin_list.php');
+}
 
-//Load Composer's autoloader
-require 'vendor/autoload.php';
+if (strcasecmp((string)($request['depart_type'] ?? ''), 'Admin') !== 0 || !workorder_request_is_admin_pending($request)) {
+    workorder_flash('danger', 'This request is no longer available for admin approval.');
+    workorder_redirect('workorder_admin_list.php');
+}
 
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
+$approverName = (string)workorder_session('fullname');
+$now = workorder_now();
+$taskStatus = 'Work in progress';
+$finalStatus = 'Work In Progress';
+$adminMsg = 'Approved By ' . $approverName;
+
+$stmt = workorder_prepare(
+    'UPDATE workorder_form
+     SET admin_status = ?, admin_msg = ?, admin_date = ?, task_status = ?, final_status = ?
+     WHERE id = ? AND admin_status = ?'
+);
+$pending = 'Pending';
+$approved = 'Approved';
+$stmt->bind_param('sssssis', $approved, $adminMsg, $now, $taskStatus, $finalStatus, $requestId, $pending);
+$stmt->execute();
+$updated = $stmt->affected_rows > 0;
+$stmt->close();
+
+if (!$updated) {
+    workorder_flash('danger', 'This request was already updated by someone else.');
+    workorder_redirect('workorder_admin_list.php');
+}
+
+workorder_log_action($requestId, 'admin', 'approved', $adminMsg);
 
 try {
-    //Server settings
-    $mail->SMTPDebug = 0;
-    $mail->Debugoutput = 'error_log';
-    $mail->isSMTP();
-    $mail->Host = 'smtp.office365.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = 'info@medicslab.com';
-    $mail->Password = 'kcmzrskfgmwzzshz';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
-
-    $mail->setFrom('info@medicslab.com', 'Medics Digital form');
-    $mail->addAddress($email);
-    //$mail->addAddress('muhammad.hamza@medicslab.com');
-
-
-    //Content
-    $mail->isHTML(true);                                  //Set email format to HTML
-     $mail->Subject = "Workorder Notification";
+    $mail = workorder_create_mailer('default');
+    $mail->addAddress((string)($request['email'] ?? ''));
+    $mail->Subject = 'Workorder Notification';
     $mail->Body = "
-<p>Dear Concern,</p>
-<p>Your work order request <strong>#{$id}</strong> has been <strong>Approved</strong> by <strong>{$name}</strong>.</p>
-<p>If you have any questions or require further assistance, please feel free to contact us.</p>
-<p>Thank you.</p>
-<p>
-Best regards,<br>
-<strong>MedicsFlow</strong>
-</p>
-";
-
+    <p>Dear Concern,</p>
+    <p>Your work order request <strong>#{$requestId}</strong> has been <strong>Approved</strong> by <strong>{$approverName}</strong>.</p>
+    <p>If you have any questions or require further assistance, please feel free to contact us.</p>
+    <p>Thank you.</p>
+    <p>Best regards,<br><strong>MedicsFlow</strong></p>
+    ";
     $mail->send();
-    //echo 'Message has been sent';
-    header("Location:workorder_admin_list.php");
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-    header("Location:workorder_admin_list.php");
+    workorder_flash('success', 'Workorder approved successfully.');
+} catch (Throwable $e) {
+    error_log('Workorder admin approve mail failed: ' . $e->getMessage());
+    workorder_flash('warning', 'Workorder approved, but the notification email could not be sent.');
 }
+
+workorder_redirect('workorder_admin_list.php');

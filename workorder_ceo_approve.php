@@ -1,54 +1,58 @@
 <?php
 
-session_start();
-include 'dbconfig.php';
+require_once __DIR__ . '/workorder_bootstrap.php';
+require_once __DIR__ . '/workorder_mail.php';
 
-$id=$_GET['id'];
-$email = $_GET['email'];
-$name = $_SESSION['fullname'];
+workorder_require_login();
+workorder_require_post_csrf();
 
-// echo "$email";
-
-$update="UPDATE workorder_form SET ceo_status = 'Approved',ceo_msg='Approved By $name',task_status='WIP' WHERE id = $id";
-$update_q=mysqli_query($conn,$update);
-
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
-
-//Load Composer's autoloader
-require 'vendor/autoload.php';
-
-//Create an instance; passing `true` enables exceptions
-$mail = new PHPMailer(true);
-
-try {
-    //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-    $mail->isSMTP();                                            //Send using SMTP
-    $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
-    $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-    $mail->Username   = 'hamza.mediclabs@gmail.com';                     //SMTP username
-    $mail->Password   = 'hwxxkrrezfslrjil';                               //SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-    $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-
-    //Recipients
-    $mail->setFrom('hamza.mediclabs@gmail.com', 'Medics Digital Form');
-    $mail->addAddress($email);     //Add a recipient;
-
-
-    //Content
-    $mail->isHTML(true);                                  //Set email format to HTML
-    $mail->Subject = "WorkOrder Request Update";
-    $mail->Body    = "Your WorkOrder request has been Approved by $name";
-    $mail->AltBody = "Your WorkOrder request has been Approved by '$name";
-
-    $mail->send();
-    //echo 'Message has been sent';
-    header("Location:workorder_ceo_list.php");
-} catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+if (!workorder_can_ceo_act()) {
+    workorder_abort(403, 'You are not allowed to approve CEO workorders.');
 }
 
-?>
+$requestId = workorder_get_request_id_from_post();
+$request = workorder_fetch_request($requestId);
+
+if (!$request) {
+    workorder_flash('danger', 'Workorder request not found.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+if (!workorder_request_is_ceo_pending($request)) {
+    workorder_flash('danger', 'This request is no longer pending CEO approval.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+$approverName = (string)workorder_session('fullname');
+$approved = 'Approved';
+$ceoMsg = 'Approved By ' . $approverName;
+$taskStatus = 'WIP';
+
+$stmt = workorder_prepare('UPDATE workorder_form SET ceo_status = ?, ceo_msg = ?, task_status = ? WHERE id = ? AND ceo_status = ?');
+$pending = 'Pending';
+$stmt->bind_param('sssis', $approved, $ceoMsg, $taskStatus, $requestId, $pending);
+$stmt->execute();
+$updated = $stmt->affected_rows > 0;
+$stmt->close();
+
+if (!$updated) {
+    workorder_flash('danger', 'This request was already updated by someone else.');
+    workorder_redirect('workorder_ceo_list.php');
+}
+
+workorder_log_action($requestId, 'ceo', 'approved', $ceoMsg);
+
+try {
+    $mail = workorder_create_mailer('ceo');
+    $mail->addAddress((string)($request['email'] ?? ''));
+    $mail->Subject = 'WorkOrder Request Update';
+    $mail->Body = 'Your WorkOrder request has been Approved by ' . workorder_h($approverName);
+    $mail->AltBody = 'Your WorkOrder request has been Approved by ' . $approverName;
+    $mail->send();
+    workorder_flash('success', 'Workorder approved successfully.');
+} catch (Throwable $e) {
+    error_log('Workorder CEO approve mail failed: ' . $e->getMessage());
+    workorder_flash('warning', 'Workorder approved, but the notification email could not be sent.');
+}
+
+workorder_redirect('workorder_ceo_list.php');

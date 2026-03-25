@@ -1,10 +1,7 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['loggedin'])) {
-    header('Location: login.php'); // Redirect to the login page
-    exit;
-}
+require_once __DIR__ . '/workorder_bootstrap.php';
+workorder_require_login();
+$flash = workorder_take_flash();
 ?>
 <!DOCTYPE html>
 <html>
@@ -287,12 +284,6 @@ if (!isset($_SESSION['loggedin'])) {
 <body>
 
 
-<?php
-include 'dbconfig.php';
-?>
-
-
-
     <div class="wrapper d-flex align-items-stretch">
             <?php
             include 'sidebar.php';
@@ -316,10 +307,13 @@ include 'dbconfig.php';
              <button id="print1" type="button" class="btn btn-danger" onclick="getPrint()">PDF</button>
              <button id="excel" class="btn btn-success dataExport" data-type="excel">Excel</button>
              <input id="filter" type="text" class="form-control w-25" placeholder="Search here..." style="height: 30px; display:inline;">
+             <?php if ($flash): ?>
+               <div class="alert alert-<?php echo $flash['type'] === 'success' ? 'success' : ($flash['type'] === 'warning' ? 'warning' : 'danger'); ?> mt-3">
+                 <?php echo htmlspecialchars($flash['message']); ?>
+               </div>
+             <?php endif; ?>
 
                 <?php
-
-                include 'dbconfig.php';
 
                 $head_depart = $_SESSION['department'];
                 // $requester_depart
@@ -379,10 +373,21 @@ include 'dbconfig.php';
                                       <td><?php echo $row['finance']?></td> -->
 
 
-                                      <td><a href="workorder_ceo_approve.php?id=<?php echo $row['id']; ?>&email=<?php echo $row['email']; ?>&name=<?php echo $row['name']; ?>" class="text-success" style="text-decoration: none;color: green;">Approve<a/>
-                                    </td>
-                                    <td ><a href="workorder_ceo_reject.php?id=<?php echo $row['id']; ?>&email=<?php echo $row['email'];?>&name=<?php echo $row['name']; ?>" style="text-decoration: none;color: red;">Reject<a/>
-                                    </td>
+                                      <td>
+                                        <form method="POST" action="workorder_ceo_approve.php" class="m-0">
+                                          <?php echo workorder_csrf_input(); ?>
+                                          <input type="hidden" name="request_id" value="<?php echo (int)$row['id']; ?>">
+                                          <button type="submit" class="btn btn-link text-success p-0" style="text-decoration: none;color: green;">Approve</button>
+                                        </form>
+                                      </td>
+                                      <td>
+                                        <form method="POST" action="workorder_ceo_reject.php" class="m-0" id="ceoRejectForm<?php echo (int)$row['id']; ?>">
+                                          <?php echo workorder_csrf_input(); ?>
+                                          <input type="hidden" name="request_id" value="<?php echo (int)$row['id']; ?>">
+                                          <input type="hidden" name="reason" value="">
+                                          <button type="button" class="btn btn-link text-danger p-0" style="text-decoration: none;color: red;" onclick="workorderSubmitReason('ceoRejectForm<?php echo (int)$row['id']; ?>', 'Enter reason for rejection:')">Reject</button>
+                                        </form>
+                                      </td>
                                     <td><button id="print2"class="btn btn-danger btn-sm hide-on-print" onclick="printRow(<?php echo $row['id']; ?>)">PDF</button>
                                     </td>
                                     
@@ -475,6 +480,7 @@ include 'dbconfig.php';
     </script>
 
     <script src="assets/js/main.js"></script>
+    <?php echo workorder_render_action_forms_js(); ?>
 
 
 </body>
